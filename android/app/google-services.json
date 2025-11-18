@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "961827758937",
+    "project_id": "tiktokk-india",
+    "storage_bucket": "tiktokk-india.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961827758937:android:df1c5bbab06964b3c86248",
+        "android_client_info": {
+          "package_name": "com.digi.tiktokkindia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961827758937-kf15telnqfo45gmjbddo7gub2vbnhkdd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.digi.tiktokkindia",
+            "certificate_hash": "96b010f43d44f5d2b9a67371f43bcfffde073ee5"
+          }
+        },
+        {
+          "client_id": "961827758937-ghu95hpfduekbrdkp6lqh1efadsqe7fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6F4owdqGEdmrCZoYIVAKbCOOnA2s0oEg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961827758937-ghu95hpfduekbrdkp6lqh1efadsqe7fj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "961827758937-sbtlec51ve6nh2craob14dcv4hvl18cu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.digi.tiktokkindia"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
