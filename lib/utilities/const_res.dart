@@ -1,4 +1,4 @@
-const String baseURL = 'https://tiktok.digiprima.co/';
+const String baseURL = 'https://tiktokkindia.com/';
 // const String baseURL = '________ BASE URL ________';
 const String apiURL = '${baseURL}api/';
 const String apiKey = 'retry123';

@@ -245,40 +245,40 @@ class UserNameView extends StatelessWidget {
           style: TextStyleCustom.unboundedSemiBold600(color: textDarkGrey(context), fontSize: 17),
           isVerify: user?.isVerify,
           iconSize: 22,
-          child: user?.getLevel.id == null
-              ? const SizedBox()
-              : GradientBorder(
-                  onPressed: () {
-                    Get.to(() => LevelScreen(userLevels: user?.getLevel));
-                  },
-                  strokeWidth: 1.5,
-                  radius: 30,
-                  gradient: StyleRes.themeGradient,
-                  child: Container(
-                    height: 27,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                        borderRadius: SmoothBorderRadius(cornerRadius: 30),
-                        color: themeAccentSolid(context).withValues(alpha: .1)),
-                    alignment: Alignment.center,
-                    child: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (bounds) =>
-                          StyleRes.themeGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                      child: RichText(
-                        text: TextSpan(
-                          text: LKey.lvl.tr,
-                          style: TextStyleCustom.outFitLight300(fontSize: 15),
-                          children: [
-                            TextSpan(
-                                text: ' ${user?.getLevel.level ?? 0}',
-                                style: TextStyleCustom.outFitBold700(fontSize: 15))
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+          // child: user?.getLevel.id == null
+          //     ? const SizedBox()
+          //     : GradientBorder(
+          //         onPressed: () {
+          //           Get.to(() => LevelScreen(userLevels: user?.getLevel));
+          //         },
+          //         strokeWidth: 1.5,
+          //         radius: 30,
+          //         gradient: StyleRes.themeGradient,
+          //         child: Container(
+          //           height: 27,
+          //           padding: const EdgeInsets.symmetric(horizontal: 15),
+          //           decoration: BoxDecoration(
+          //               borderRadius: SmoothBorderRadius(cornerRadius: 30),
+          //               color: themeAccentSolid(context).withValues(alpha: .1)),
+          //           alignment: Alignment.center,
+          //           child: ShaderMask(
+          //             blendMode: BlendMode.srcIn,
+          //             shaderCallback: (bounds) =>
+          //                 StyleRes.themeGradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
+          //             child: RichText(
+          //               text: TextSpan(
+          //                 text: LKey.lvl.tr,
+          //                 style: TextStyleCustom.outFitLight300(fontSize: 15),
+          //                 children: [
+          //                   TextSpan(
+          //                       text: ' ${user?.getLevel.level ?? 0}',
+          //                       style: TextStyleCustom.outFitBold700(fontSize: 15))
+          //                 ],
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ),
         ),
         Text(user?.fullname ?? '', style: TextStyleCustom.outFitLight300(color: textLightGrey(context), fontSize: 16))
       ],

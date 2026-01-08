@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:shortzz/common/controller/ads_controller.dart';
+// import 'package:shortzz/common/controller/ads_controller.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/controller/firebase_firestore_controller.dart';
 import 'package:shortzz/common/manager/firebase_notification_manager.dart';
@@ -30,7 +30,7 @@ class DashboardScreenController extends BaseController
   List<String> bottomIconList = [
     AssetRes.icReel,
     AssetRes.icPost,
-    AssetRes.icLiveStream,
+    // AssetRes.icLiveStream,
     AssetRes.icSearch,
     AssetRes.icChat,
     AssetRes.icProfile
@@ -65,7 +65,7 @@ class DashboardScreenController extends BaseController
     onProgress = (progress) {
       postProgress.value = progress;
     };
-    Get.put(AdsController());
+    // Get.put(AdsController());
   }
 
   @override

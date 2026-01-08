@@ -7,6 +7,13 @@ plugins {
 
 }
 
+// 🔥 ADD THIS BLOCK
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.digi.tiktokkindia"
     compileSdk = 36
@@ -33,14 +40,36 @@ android {
         versionName = '1.0.5'
     }
 
+        // ✅ ADD THIS PART
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            shrinkResources false
-            minifyEnabled false
+            // shrinkResources false
+            // minifyEnabled false
+            // // TODO: Add your own signing config for the release build.
+            // // Signing with the debug keys for now, so `flutter run --release` works.
+            // signingConfig = signingConfigs.debug
+            shrinkResources true
+            minifyEnabled true
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
         }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        
     }
 
 }

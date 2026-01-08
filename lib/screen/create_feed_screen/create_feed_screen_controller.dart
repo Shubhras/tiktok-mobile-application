@@ -565,6 +565,7 @@ class CreateFeedScreenController extends BaseController {
           .then((result) {
         if (result.status == true && result.data != null) {
           uploadedImagePaths.add(result.data!);
+           print("SHAMIMMIMIMIMIMIMIMIMIMMIIMIIMIMIMIMIMIMI ${result.data}");
           Loggers.success('Image uploaded: ${result.data}');
         } else {
           Loggers.error('Image upload failed: ${result.message}');

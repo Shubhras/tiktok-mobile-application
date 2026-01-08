@@ -24,3 +24,33 @@ class LiveStreamBlurBackgroundImage extends StatelessWidget {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:shortzz/utilities/color_res.dart';
+
+// class LiveStreamBlurBackgroundImage extends StatelessWidget {
+//   final bool useGradient; // 👈 condition flag
+
+//   const LiveStreamBlurBackgroundImage({super.key, this.useGradient = true});
+
+//   @override
+//   Widget build(BuildContext context) {
+
+//       // 🔵 Show Gradient Background
+//       return Container(
+//         height: double.infinity,
+//         width: double.infinity,
+//         decoration: const BoxDecoration(
+//           gradient: LinearGradient(
+//             colors: [
+//               ColorRes.themeGradient1, // Sky Blue
+//               ColorRes.themeGradient2, // Deep Sky Blue
+//             ],
+//             begin: Alignment.topCenter,
+//             end: Alignment.bottomCenter,
+//           ),
+//         ),
+//       );
+//     }
+
+// }

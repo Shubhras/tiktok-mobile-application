@@ -39,8 +39,8 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: PopScope(
         onPopInvokedWithResult: (didPop, result) {
-          controller.adsController
-              .showInterstitialAdIfAvailable(isPopScope: true);
+          // controller.adsController
+          //     .showInterstitialAdIfAvailable(isPopScope: true);
         },
         child: SafeArea(
           bottom: false,
@@ -161,7 +161,7 @@ class _TopViewForOtherUser extends StatelessWidget {
             children: [
               CustomBackButton(
                 onTap: () {
-                  controller.adsController.showInterstitialAdIfAvailable();
+                  // controller.adsController.showInterstitialAdIfAvailable();
                 },
                 padding: const EdgeInsets.all(15),
               ),

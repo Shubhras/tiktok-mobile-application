@@ -100,6 +100,7 @@ class NotificationService {
           },
           body: json.encode(inputData));
       Loggers.success('Notification response : ${response.body}');
+      Loggers.success('Notification response1111111111 inputData : ${json.encode(inputData)} ${authorizationToken ?? SessionManager.instance.getAuthToken()}');
     } catch (e) {
       Loggers.error(e);
     }

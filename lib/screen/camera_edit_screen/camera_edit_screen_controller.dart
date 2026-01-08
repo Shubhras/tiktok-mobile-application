@@ -294,8 +294,8 @@ class CameraEditScreenController extends BaseController {
     final currentContent = content.value;
     if (currentContent.type == PostStoryContentType.reel) {
       final videoPath = currentContent.content ?? '';
-      print("PLPLPLPLPLPLPLPLPLPLPL $videoPath");
       if (videoPath.isNotEmpty) {
+      print("PLPLPLPLPLPLPLPLPLPLPL $videoPath");
         handleReelUpload();
         // digiprima
         // SightEngineService.shared.checkVideoInSightEngine(
@@ -478,10 +478,10 @@ class CameraEditScreenController extends BaseController {
 
     Loggers.info('[Story Upload] Checking moderation for video...');
 
-    await SightEngineService.shared.checkVideoInSightEngine(
-      xFile: XFile(inputFile),
-      duration: storyDuration,
-      completion: () async {
+    // await SightEngineService.shared.checkVideoInSightEngine(
+    //   xFile: XFile(inputFile),
+    //   duration: storyDuration,
+    //   completion: () async {
         Get.back();
         Get.back();
         Get.back();
@@ -531,8 +531,8 @@ class CameraEditScreenController extends BaseController {
         } finally {
           isMergingVideo.value = false;
         }
-      },
-    );
+    //   },
+    // );
   }
 
   /// Handles image/text story: moderation, screenshot, optional music or filter

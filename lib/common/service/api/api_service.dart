@@ -78,6 +78,7 @@ class ApiService {
             jsonDecode(response.body) as Map<String, dynamic>;
 
         if (decodedResponse['message'] == 'this user is freezed!') {
+          print('Session Freeze Detected');
           DebounceAction.shared.call(() {
             Get.offAll(
                 () => const SessionExpiredScreen(type: SessionType.freeze));
@@ -103,6 +104,7 @@ class ApiService {
       } else if (response.statusCode == 401) {
         Loggers.error('Unauthorized Error 401: ${response.statusCode}');
         DebounceAction.shared.call(() {
+          print('Session Unauthorized Detected');
           Get.offAll(
             () => const SessionExpiredScreen(type: SessionType.unauthorized));
         });

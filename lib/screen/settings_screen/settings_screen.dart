@@ -40,8 +40,8 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SubscriptionCard(
-                  controller: controller, onUpdateUser: onUpdateUser),
+              // SubscriptionCard(
+              //     controller: controller, onUpdateUser: onUpdateUser),
               SettingLabel(title: LKey.personal.toUpperCase()),
               SettingIconTextWithArrow(
                 icon: AssetRes.icEdit,
@@ -57,15 +57,15 @@ class SettingsScreen extends StatelessWidget {
                   Get.to(() => const SavedPostScreen());
                 },
               ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icLanguage_1,
-                title: LKey.languages,
-                onTap: () {
-                  Get.to(() => const SelectLanguageScreen(
-                      languageNavigationType:
-                          LanguageNavigationType.fromSetting));
-                },
-              ),
+              // SettingIconTextWithArrow(
+              //   icon: AssetRes.icLanguage_1,
+              //   title: LKey.languages,
+              //   onTap: () {
+              //     Get.to(() => const SelectLanguageScreen(
+              //         languageNavigationType:
+              //             LanguageNavigationType.fromSetting));
+              //   },
+              // ),
               SettingIconTextWithArrow(
                 icon: AssetRes.icBlock,
                 title: LKey.blockedUsers,
@@ -80,13 +80,13 @@ class SettingsScreen extends StatelessWidget {
                   Get.to(() => const QrCodeScreen());
                 },
               ),
-              SettingIconTextWithArrow(
-                icon: AssetRes.icWallet,
-                title: LKey.coinWallet,
-                onTap: () {
-                  Get.to(() => const CoinWalletScreen());
-                },
-              ),
+              // SettingIconTextWithArrow(
+              //   icon: AssetRes.icWallet,
+              //   title: LKey.coinWallet,
+              //   onTap: () {
+              //     Get.to(() => const CoinWalletScreen());
+              //   },
+              // ),
               SettingLabel(title: LKey.privacy.toUpperCase()),
               Obx(
                 () => SettingIconTextWithArrow(

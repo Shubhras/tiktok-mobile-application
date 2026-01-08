@@ -5,7 +5,7 @@ import 'package:shortzz/common/widget/custom_divider.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/screen/camera_screen/camera_screen.dart';
 import 'package:shortzz/screen/create_feed_screen/create_feed_screen.dart';
-import 'package:shortzz/screen/live_stream/create_live_stream_screen/create_live_stream_screen.dart';
+// import 'package:shortzz/screen/live_stream/create_live_stream_screen/create_live_stream_screen.dart';
 import 'package:shortzz/screen/profile_screen/profile_screen_controller.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
@@ -52,8 +52,8 @@ class PostOptionsSheet extends StatelessWidget {
                               case PublishType.reels:
                                 Get.to(() => const CameraScreen(
                                     cameraType: CameraScreenType.post));
-                              case PublishType.goLive:
-                                Get.to(() => const CreateLiveStreamScreen());
+                              // case PublishType.goLive:
+                              //   Get.to(() => const CreateLiveStreamScreen());
                             }
                           },
                           image: data.image,
@@ -117,21 +117,21 @@ class PostOptionIconWithText extends StatelessWidget {
 enum PublishType {
   feed,
   story,
-  reels,
-  goLive;
+  reels;
+  // goLive;
 
   static const Map<PublishType, String> images = {
     PublishType.feed: AssetRes.icPost,
     PublishType.story: AssetRes.icStory,
     PublishType.reels: AssetRes.icReel,
-    PublishType.goLive: AssetRes.icLive_1,
+    // PublishType.goLive: AssetRes.icLive_1,
   };
 
   static Map<PublishType, String> titles = {
     PublishType.feed: LKey.feed.tr,
     PublishType.story: LKey.story.tr,
     PublishType.reels: LKey.reels.tr,
-    PublishType.goLive: LKey.goLive.tr,
+    // PublishType.goLive: LKey.goLive.tr,
   };
 
   String get image => images[this]!;
