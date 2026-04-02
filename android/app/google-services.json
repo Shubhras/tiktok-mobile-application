@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "172394479566",
+    "project_id": "zoyoshorts",
+    "storage_bucket": "zoyoshorts.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172394479566:android:3c82fe3dfd12d5bcdbb59f",
+        "android_client_info": {
+          "package_name": "com.digi.zoyoshorts"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172394479566-v7isns8990jdlkub86i6am4qv4ncqjs6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBXEBfqA0WfO0S6yyKalwTWuyjIFUWVBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172394479566-v7isns8990jdlkub86i6am4qv4ncqjs6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
