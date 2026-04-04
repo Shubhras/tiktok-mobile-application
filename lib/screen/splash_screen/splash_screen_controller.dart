@@ -51,7 +51,7 @@ class SplashScreenController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 1000));
     bool showNavigate = await CommonService.instance.fetchGlobalSettings();
     if (showNavigate) {
-      final translations = Get.find<DynamicTranslations>();
+      // final translations = Get.find<DynamicTranslations>();
       var setting = SessionManager.instance.getSettings();
       var languages = setting?.languages ?? [];
       List<Language> downloadLanguages = languages.where((element) => element.status == 1).toList();
@@ -60,19 +60,24 @@ class SplashScreenController extends BaseController {
         return;
       }
 
-      var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
+      // var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
 
-      translations.addTranslations(downloadedFiles);
+      // translations.addTranslations(downloadedFiles);
 
       var defaultLang = languages.firstWhereOrNull((element) => element.isDefault == 1);
-
+      Loggers.info("ParametersCXCXCXCXCXCXXCX: ${defaultLang?.toJson()}");
       if (defaultLang != null) {
+      Loggers.info("defaultLangdefaultLangdefaultLangdefaultLangdefaultLang: ${defaultLang.code}");
+        
         SessionManager.instance.setFallbackLang(defaultLang.code ?? 'en');
       }
 
-      RestartWidget.restartApp(Get.context!);
+      // RestartWidget.restartApp(Get.context!);
       if (SessionManager.instance.isLogin()) {
+        Loggers.info("isLoginisLoginisLoginisLoginisLogin: ${SessionManager.instance.isLogin()}");
         UserService.instance.fetchUserDetails(userId: SessionManager.instance.getUserID()).then((value) {
+        Loggers.info("VLVLVLVLVLVLLVLVLVLVLVLVLVLVLV: ${value?.toJson()}");
+
           if (value != null) {
             Get.off(() => DashboardScreen(myUser: value));
           } else {
@@ -80,11 +85,16 @@ class SplashScreenController extends BaseController {
           }
         });
       } else {
+        Loggers.info("elseelseelseelseelse: ${SessionKeys.isLanguageScreenSelect}");
+
         bool isLanguageSelect = SessionManager.instance.getBool(SessionKeys.isLanguageScreenSelect);
         bool onBoardingShow = SessionManager.instance.getBool(SessionKeys.isOnBoardingScreenSelect);
-        if (isLanguageSelect == false) {
-          Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
-        } else if (onBoardingShow == false && (setting?.onBoarding ?? []).isNotEmpty) {
+        Loggers.info("onBoardingShowonBoardingShowonBoardingShow: ${onBoardingShow}");
+        // if (isLanguageSelect == false) {
+        //   Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
+        // } else 
+        
+        if (onBoardingShow == false && (setting?.onBoarding ?? []).isNotEmpty) {
           Get.off(() => const OnBoardingScreen());
         } else {
           Get.off(() => const LoginScreen());
@@ -99,6 +109,7 @@ class SplashScreenController extends BaseController {
     final languageData = <String, Map<String, String>>{};
 
     for (var language in languages) {
+      //  Loggers.info("ParametersCXCXCXCXCXCXXCX: ${language.toJson()}");
       if (language.code != null && language.csvFile != null) {
         // Start the download and add it to the active set
         final downloadTask = downloadAndProcessLanguage(language, languageData);
@@ -124,6 +135,7 @@ class SplashScreenController extends BaseController {
   Future<void> downloadAndProcessLanguage(Language language, Map<String, Map<String, String>> languageData) async {
     try {
       final response = await http.get(Uri.parse(language.csvFile?.addBaseURL() ?? ''));
+      print('${language.csvFile?.addBaseURL()} Downloading language file for ${language.code} from ${language.csvFile}');
       if (response.statusCode == 200) {
         final csvContent = utf8.decode(response.bodyBytes);
         // Parse the CSV into a map

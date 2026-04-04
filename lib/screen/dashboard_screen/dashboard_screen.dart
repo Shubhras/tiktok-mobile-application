@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:proste_indexed_stack/proste_indexed_stack.dart';
-import 'package:shortzz/common/widget/banner_ads_custom.dart';
+// import 'package:shortzz/common/widget/banner_ads_custom.dart';
 import 'package:shortzz/common/widget/gradient_border.dart';
 import 'package:shortzz/common/widget/gradient_icon.dart';
 import 'package:shortzz/model/user_model/user_model.dart';
@@ -11,7 +11,7 @@ import 'package:shortzz/screen/dashboard_screen/dashboard_screen_controller.dart
 import 'package:shortzz/screen/explore_screen/explore_screen.dart';
 import 'package:shortzz/screen/feed_screen/feed_screen.dart';
 import 'package:shortzz/screen/home_screen/home_screen.dart';
-import 'package:shortzz/screen/live_stream/live_stream_search_screen/live_stream_search_screen.dart';
+// import 'package:shortzz/screen/live_stream/live_stream_search_screen/live_stream_search_screen.dart';
 import 'package:shortzz/screen/message_screen/message_screen.dart';
 import 'package:shortzz/screen/profile_screen/profile_screen.dart';
 import 'package:shortzz/utilities/style_res.dart';
@@ -38,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   IndexedStackChild(child: const HomeScreen(), preload: true),
                   IndexedStackChild(child: FeedScreen(myUser: myUser), preload: true),
-                  IndexedStackChild(child: const LiveStreamSearchScreen(), preload: true),
+                  // IndexedStackChild(child: const LiveStreamSearchScreen(), preload: true),
                   IndexedStackChild(child: const ExploreScreen(), preload: true),
                   IndexedStackChild(child: const MessageScreen(), preload: true),
                   IndexedStackChild(
@@ -48,8 +48,8 @@ class DashboardScreen extends StatelessWidget {
                 ],
               ),
             ),
-            if (controller.selectedPageIndex.value != 0)
-              const BannerAdsCustom(),
+            // if (controller.selectedPageIndex.value != 0)
+            //   const BannerAdsCustom(),
           ],
         );
       }),

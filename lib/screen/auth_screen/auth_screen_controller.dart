@@ -53,10 +53,10 @@ class AuthScreenController extends BaseController {
         return showSnackBar(LKey.userNotFound.tr);
       }
 
-      if (credential.user?.emailVerified == false) {
-        stopLoader();
-        return showSnackBar(LKey.verifyEmailFirst.tr);
-      }
+      // if (credential.user?.emailVerified == false) {
+      //   stopLoader();
+      //   return showSnackBar(LKey.verifyEmailFirst.tr);
+      // }
 
       String fullname = credential.user?.displayName ?? email.split('@')[0];
       final user.User? data = await _registration(
@@ -221,6 +221,7 @@ class AuthScreenController extends BaseController {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailController.text.trim(), password: passwordController.text.trim());
+          print("credentialcredentialcredential $credential");
       return credential;
     } on FirebaseAuthException catch (e) {
       stopLoader();

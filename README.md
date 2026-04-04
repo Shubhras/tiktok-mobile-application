@@ -654,3 +654,69 @@ helping new startups financially.
 #### Deleted Files
 
 - none
+
+
+
+### Production SHA-1
+<!-- keytool -list -v -keystore android/app/zoyo-shorts-key.keystore -alias zoyo-shorts-key
+zoyoshorts@786Digi@123 -->
+
+### Debug SHA-1
+<!-- keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android -->
+
+### Create AAB File for play store
+flutter build appbundle
+path: build/app/outputs/bundle/release/app-release.aab
+
+### Create APK File 
+flutter build apk --release
+build/app/outputs/flutter-apk/app-release.apk
+
+### Error retrytech_plugin || NoClassDefFoundError
+<!-- E/AndroidRuntime(30019): FATAL EXCEPTION: main E/AndroidRuntime(30019): Process: com.digi.zoyoshorts, PID: 30019 E/AndroidRuntime(30019): java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/media3/transformer/Muxer$Factory; E/AndroidRuntime(30019): at com.retrytech.retrytech_plugin.RetrytechPlugin.applyFilterAndAudioToVideo(RetrytechPlugin.kt:533) -->
+
+then 
+termnal
+cd android 
+./gradlew app:dependencies | grep media3
+
+open this file RetrytechPlugin.kt
+
+
+✅ FINAL FIX (WORKING SOLUTION)
+🔥 Fix 1: REMOVE MuxerFactory line
+
+👉 Replace this:
+
+.setMuxerFactory(DefaultMuxer.Factory())
+
+👉 With this (REMOVE completely):
+
+// ❌ REMOVE THIS LINE
+✅ Final code should be:
+val transformer = Transformer.Builder(context!!)
+    .setPortraitEncodingEnabled(true)
+    .addListener(object : Transformer.Listener {
+        override fun onError(
+            composition: Composition,
+            exportResult: ExportResult,
+            exportException: ExportException
+        ) {
+            result.success(false)
+            Log.d("TAG", "onMethodCall: " + exportException.message)
+            super.onError(composition, exportResult, exportException)
+        }
+
+        override fun onCompleted(composition: Composition, exportResult: ExportResult) {
+            super.onCompleted(composition, exportResult)
+            result.success(true)
+        }
+    })
+    .build()
+
+
+    open build.grdel
+    implementation "androidx.media3:media3-transformer:1.9.2"
+implementation "androidx.media3:media3-exoplayer:1.9.2"
+implementation "androidx.media3:media3-common:1.9.2"
+implementation "androidx.media3:media3-muxer:1.9.2"

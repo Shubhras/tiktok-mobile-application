@@ -295,11 +295,14 @@ class CameraEditScreenController extends BaseController {
     if (currentContent.type == PostStoryContentType.reel) {
       final videoPath = currentContent.content ?? '';
       if (videoPath.isNotEmpty) {
-        SightEngineService.shared.checkVideoInSightEngine(
-          xFile: XFile(videoPath),
-          duration: videoPlayerController.value?.value.duration.inSeconds ?? 0,
-          completion: handleReelUpload,
-        );
+         print("PLPLPLPLPLPLPLPLPLPLPL $videoPath");
+        handleReelUpload();
+        // return;
+        // SightEngineService.shared.checkVideoInSightEngine(
+        //   xFile: XFile(videoPath),
+        //   duration: videoPlayerController.value?.value.duration.inSeconds ?? 0,
+        //   completion: handleReelUpload,
+        // );
       } else {
         showSnackBar(LKey.videoPathNotFound.tr);
       }
@@ -396,7 +399,6 @@ class CameraEditScreenController extends BaseController {
         audioPath: audioPath,
         audioStartTimeInMS: audioStartTimeInMS,
       );
-
       if (result == true) {
         finalPath = outputPath;
       } else {
@@ -475,10 +477,10 @@ class CameraEditScreenController extends BaseController {
 
     Loggers.info('[Story Upload] Checking moderation for video...');
 
-    await SightEngineService.shared.checkVideoInSightEngine(
-      xFile: XFile(inputFile),
-      duration: storyDuration,
-      completion: () async {
+    // await SightEngineService.shared.checkVideoInSightEngine(
+    //   xFile: XFile(inputFile),
+    //   duration: storyDuration,
+    //   completion: () async {
         Get.back();
         Get.back();
         Get.back();
@@ -528,8 +530,8 @@ class CameraEditScreenController extends BaseController {
         } finally {
           isMergingVideo.value = false;
         }
-      },
-    );
+    //   },
+    // );
   }
 
   /// Handles image/text story: moderation, screenshot, optional music or filter
@@ -553,9 +555,9 @@ class CameraEditScreenController extends BaseController {
       if (value == null) {
         return Loggers.error('❌ Failed to compress image');
       }
-      await SightEngineService.shared.checkImagesInSightEngine(
-        xFiles: [value],
-        completion: () async {
+      // await SightEngineService.shared.checkImagesInSightEngine(
+      //   xFiles: [value],
+      //   completion: () async {
           Get.back();
           Get.back();
           Get.back();
@@ -597,8 +599,8 @@ class CameraEditScreenController extends BaseController {
                 type: PostStoryContentType.storyImage,
                 musicId: -1);
           }
-        },
-      );
+      //   },
+      // );
     });
   }
 

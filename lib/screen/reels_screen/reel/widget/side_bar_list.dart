@@ -72,11 +72,11 @@ class SideBarList extends StatelessWidget {
               image: AssetRes.icShare,
               text: isPlaceholder ? '1' : (reel.shares ?? 0).toString(),
             ),
-            Visibility(
-              visible: controller.reelData.value.user?.id !=
-                  SessionManager.instance.getUserID(),
-              child: IconWithGift(onTap: controller.onGiftTap),
-            ),
+            // Visibility(
+            //   visible: controller.reelData.value.user?.id !=
+            //       SessionManager.instance.getUserID(),
+            //   child: IconWithGift(onTap: controller.onGiftTap),
+            // ),
             Visibility(
               visible: music != null,
               child: IconWithMusic(

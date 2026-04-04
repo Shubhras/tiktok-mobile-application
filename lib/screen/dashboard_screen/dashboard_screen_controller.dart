@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:shortzz/common/controller/ads_controller.dart';
+// import 'package:shortzz/common/controller/ads_controller.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/controller/firebase_firestore_controller.dart';
 import 'package:shortzz/common/manager/firebase_notification_manager.dart';
@@ -28,7 +28,7 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
   List<String> bottomIconList = [
     AssetRes.icReel,
     AssetRes.icPost,
-    AssetRes.icLiveStream,
+    // AssetRes.icLiveStream,
     AssetRes.icSearch,
     AssetRes.icChat,
     AssetRes.icProfile
@@ -57,7 +57,7 @@ class DashboardScreenController extends BaseController with GetSingleTickerProvi
     }
     Get.put(GifSheetController());
     Get.put(FirebaseFirestoreController());
-    Get.put(AdsController());
+    // Get.put(AdsController());
     animationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
     scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(parent: animationController, curve: Curves.easeInOut),

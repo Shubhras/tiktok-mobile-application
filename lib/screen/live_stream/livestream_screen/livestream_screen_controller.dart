@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shortzz/common/controller/ads_controller.dart';
+// import 'package:shortzz/common/controller/ads_controller.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/controller/firebase_firestore_controller.dart';
 import 'package:shortzz/common/extensions/user_extension.dart';
@@ -25,7 +25,7 @@ import 'package:shortzz/model/livestream/livestream_user_state.dart';
 import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/gift_sheet/send_gift_sheet.dart';
 import 'package:shortzz/screen/gift_sheet/send_gift_sheet_controller.dart';
-import 'package:shortzz/screen/live_stream/live_stream_end_screen/live_stream_end_screen.dart';
+// import 'package:shortzz/screen/live_stream/live_stream_end_screen/live_stream_end_screen.dart';
 import 'package:shortzz/screen/live_stream/live_stream_end_screen/widget/livestream_summary.dart';
 import 'package:shortzz/screen/live_stream/livestream_screen/audience/widget/live_stream_join_sheet.dart';
 import 'package:shortzz/screen/live_stream/livestream_screen/host/widget/live_stream_host_top_view.dart';
@@ -42,7 +42,7 @@ class LivestreamScreenController extends BaseController {
   ZegoExpressEngine zegoEngine = ZegoExpressEngine.instance;
 
   final firestoreController = Get.find<FirebaseFirestoreController>();
-  final adsController = Get.find<AdsController>();
+  // final adsController = Get.find<AdsController>();
 
   Timer? timer;
   Timer? minViewerTimeoutTimer;
@@ -1227,8 +1227,8 @@ class LivestreamScreenController extends BaseController {
     int viewers = liveUsersStates.length;
     if (isHost) {
       Get.back();
-      Get.off(() => LiveStreamEndScreen(
-          userState: userState, isHost: isHost, viewers: viewers));
+      // Get.off(() => LiveStreamEndScreen(
+      //     userState: userState, isHost: isHost, viewers: viewers));
     } else {
       if (userState?.type == LivestreamUserType.coHost) {
         Get.bottomSheet(
@@ -1321,7 +1321,7 @@ class LivestreamScreenController extends BaseController {
         title: LKey.exitLiveStreamTitle.tr,
         description: LKey.exitLiveStreamDescription.tr,
         onTap: () async {
-          adsController.showInterstitialAdIfAvailable();
+          // adsController.showInterstitialAdIfAvailable();
           if (liveData.value.coHostIds?.contains(myUserId) ?? false) {
             closeCoHostStream(myUserId);
           }

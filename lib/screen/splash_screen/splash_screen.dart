@@ -16,7 +16,7 @@ class SplashScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          const ThemeBlurBg(),
+          const ThemeBlurBg(useGradient: true),
           Align(
             alignment: Alignment.center,
             child: CustomShimmerFillText(

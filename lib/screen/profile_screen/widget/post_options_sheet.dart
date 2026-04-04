@@ -44,18 +44,38 @@ class PostOptionsSheet extends StatelessWidget {
                           onTap: () {
                             Get.back();
                             onChanged?.call(data);
+                            // switch (data) {
+                            //   case PublishType.feed:
+                            //     Get.to(() => CreateFeedScreen(
+                            //         createType: CreateFeedType.feed,
+                            //         onAddPost: controller.onAddPost));
+                            //   case PublishType.story:
+                            //     Get.to(() => const CameraScreen(cameraType: CameraScreenType.story));
+                            //   case PublishType.reels:
+                            //     Get.to(() => const CameraScreen(
+                            //         cameraType: CameraScreenType.post));
+                            //   case PublishType.goLive:
+                            //     Get.to(() => const CreateLiveStreamScreen());
+                            // }
                             switch (data) {
                               case PublishType.feed:
                                 Get.to(() => CreateFeedScreen(
-                                    createType: CreateFeedType.feed,
-                                    onAddPost: controller.onAddPost));
+                                      createType: CreateFeedType.feed,
+                                      onAddPost: controller.onAddPost,
+                                    ));
+                                break;
+
                               case PublishType.story:
-                                Get.to(() => const CameraScreen(cameraType: CameraScreenType.story));
+                                Get.to(() => const CameraScreen(
+                                      cameraType: CameraScreenType.story,
+                                    ));
+                                break;
+
                               case PublishType.reels:
                                 Get.to(() => const CameraScreen(
-                                    cameraType: CameraScreenType.post));
-                              case PublishType.goLive:
-                                Get.to(() => const CreateLiveStreamScreen());
+                                      cameraType: CameraScreenType.post,
+                                    ));
+                                break;
                             }
                           },
                           image: data.image,
@@ -116,27 +136,57 @@ class PostOptionIconWithText extends StatelessWidget {
   }
 }
 
+// enum PublishType {
+//   feed,
+//   story,
+//   reels,
+//   // goLive;
+
+//   static const Map<PublishType, String> images = {
+//     PublishType.feed: AssetRes.icPost,
+//     PublishType.story: AssetRes.icStory,
+//     PublishType.reels: AssetRes.icReel,
+//     // PublishType.goLive: AssetRes.icLive_1,
+//   };
+
+//   static Map<PublishType, String> titles = {
+//     PublishType.feed: LKey.feed.tr,
+//     PublishType.story: LKey.story.tr,
+//     PublishType.reels: LKey.reels.tr,
+//     // PublishType.goLive: LKey.goLive.tr,
+//   };
+
+//   String get image => images[this]!;
+
+//   String get title => titles[this]!;
+// }
+
 enum PublishType {
   feed,
   story,
-  reels,
-  goLive;
+  reels;
 
-  static const Map<PublishType, String> images = {
-    PublishType.feed: AssetRes.icPost,
-    PublishType.story: AssetRes.icStory,
-    PublishType.reels: AssetRes.icReel,
-    PublishType.goLive: AssetRes.icLive_1,
-  };
+  /// IMAGE GETTER
+  String get image {
+    switch (this) {
+      case PublishType.feed:
+        return AssetRes.icPost;
+      case PublishType.story:
+        return AssetRes.icStory;
+      case PublishType.reels:
+        return AssetRes.icReel;
+    }
+  }
 
-  static Map<PublishType, String> titles = {
-    PublishType.feed: LKey.feed.tr,
-    PublishType.story: LKey.story.tr,
-    PublishType.reels: LKey.reels.tr,
-    PublishType.goLive: LKey.goLive.tr,
-  };
-
-  String get image => images[this]!;
-
-  String get title => titles[this]!;
+  /// TITLE GETTER (reactive safe)
+  String get title {
+    switch (this) {
+      case PublishType.feed:
+        return LKey.feed.tr;
+      case PublishType.story:
+        return LKey.story.tr;
+      case PublishType.reels:
+        return LKey.reels.tr;
+    }
+  }
 }

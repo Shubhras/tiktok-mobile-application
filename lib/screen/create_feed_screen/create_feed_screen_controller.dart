@@ -232,37 +232,39 @@ class CreateFeedScreenController extends BaseController {
 
   void runContentModerationAndUpload(
       {required String description, required Map<String, dynamic> params}) {
-    switch (feedPostType.value) {
-      case FeedPostType.image:
-        Loggers.info('Running SightEngine image moderation...');
-        List<XFile> imageFiles = images.map((img) => img.media).toList();
-        SightEngineService.shared.checkImagesInSightEngine(
-          xFiles: imageFiles,
-          completion: () {
-            _uploadPostHandler(params);
-          },
-        );
-        break;
-      case FeedPostType.text:
-        Loggers.info('Running SightEngine text moderation...');
-        SightEngineService.shared.chooseTextModeration(
-          text: description,
-          completion: () {
-            _uploadPostHandler(params);
-          },
-        );
-        break;
-      case FeedPostType.video:
-        Loggers.info('Running SightEngine video moderation...');
-        SightEngineService.shared.checkVideoInSightEngine(
-          xFile: video.value!.media,
-          duration: videoPlayerController.value?.value.duration.inSeconds ?? 0,
-          completion: () {
-            _uploadPostHandler(params);
-          },
-        );
-        break;
-    }
+          _uploadPostHandler(params);
+    // switch (feedPostType.value) {
+    //   case FeedPostType.image:
+    //     Loggers.info('Running SightEngine image moderation...');
+    //     List<XFile> imageFiles = images.map((img) => img.media).toList();
+    //     SightEngineService.shared.checkImagesInSightEngine(
+    //       xFiles: imageFiles,
+    //       completion: () {
+    //         _uploadPostHandler(params);
+    //       },
+    //     );
+    //     break;
+    //   case FeedPostType.text:
+    //     Loggers.info('Running SightEngine text moderation...');
+    //     SightEngineService.shared.chooseTextModeration(
+    //       text: description,
+    //       completion: () {
+    //         _uploadPostHandler(params);
+    //       },
+    //     );
+    //     break;
+    //   case FeedPostType.video:
+    //     Loggers.info('Running SightEngine video moderation...');
+    //     SightEngineService.shared.checkVideoInSightEngine(
+    //       xFile: video.value!.media,
+    //       duration: videoPlayerController.value?.value.duration.inSeconds ?? 0,
+    //       completion: () {
+    //         _uploadPostHandler(params);
+    //       },
+    //     );
+    //     break;
+    // }
+
   }
 
   Future<void> _uploadPostHandler(Map<String, dynamic> postParams) async {
