@@ -1,22 +1,28 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shortzz/common/widget/my_refresh_indicator.dart';
 import 'package:shortzz/common/widget/no_data_widget.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/post_story/post_by_id.dart';
 import 'package:shortzz/model/post_story/post_model.dart';
+import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/comment_sheet/widget/hashtag_and_mention_view.dart';
 import 'package:shortzz/screen/reels_screen/reel/reel_page.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/screen/reels_screen/widget/reels_text_field.dart';
 import 'package:shortzz/screen/reels_screen/widget/reels_top_bar.dart';
 import 'package:shortzz/utilities/theme_res.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 // ---------------------------------------------------------------
 // REELS SCREEN (PAGEVIEW)
 // ---------------------------------------------------------------
 class ReelsScreen extends StatefulWidget {
+  final ReelPageType pageType;
+  final User? user;
+  final String? hashTag;
   final RxList<Post> reels;
   final int position;
   final Widget? widget;
@@ -24,8 +30,6 @@ class ReelsScreen extends StatefulWidget {
   final Future<void> Function()? onRefresh;
   final RxBool? isLoading;
   final PostByIdData? postByIdData;
-  final bool isHomePage;
-  final bool isFromChat;
 
   const ReelsScreen({
     super.key,
@@ -36,8 +40,9 @@ class ReelsScreen extends StatefulWidget {
     this.onRefresh,
     this.isLoading,
     this.postByIdData,
-    this.isHomePage = false,
-    this.isFromChat = false,
+    required this.pageType,
+    this.user,
+    this.hashTag,
   });
 
   @override
@@ -50,14 +55,25 @@ class _ReelsScreenState extends State<ReelsScreen> {
   @override
   void initState() {
     super.initState();
+    String tag = widget.pageType.withId(userId: widget.user?.id, hashTag: widget.hashTag);
+
+    // 🔥 Always remove old controller if exists
+    if (Get.isRegistered<ReelsScreenController>(tag: tag)) {
+      Get.delete<ReelsScreenController>(tag: tag, force: true);
+    }
+
+    // ✅ Always create new controller
     controller = Get.put(
-        ReelsScreenController(
-          reels: widget.reels,
-          currentIndex: widget.position.obs,
-          onFetchMoreData: widget.onFetchMoreData,
-          isHomePage: widget.isHomePage,
-        ),
-        tag: widget.isHomePage ? ReelsScreenController.tag : '${DateTime.now().millisecondsSinceEpoch}');
+      ReelsScreenController(
+        reels: widget.reels,
+        position: widget.position.obs,
+        onFetchMoreData: widget.onFetchMoreData,
+        reelPageType: widget.pageType,
+      ),
+      tag: tag,
+    );
+
+    controller.pageController = PageController(initialPage: widget.position);
   }
 
   @override
@@ -78,40 +94,70 @@ class _ReelsScreenState extends State<ReelsScreen> {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      Obx(() {
-                        final reels = widget.reels;
-                        if (widget.isLoading?.value == true && reels.isEmpty) {
-                          return Center(child: CupertinoActivityIndicator(color: textLightGrey(context)));
-                        }
-                        if (widget.isLoading?.value == false && reels.isEmpty) {
-                          return NoDataWidgetWithScroll(
-                              title: LKey.reelsEmptyTitle.tr, description: LKey.reelsEmptyDescription.tr);
-                        }
-                        return PageView.builder(
-                          controller: controller.pageController,
-                          physics: const CustomPageViewScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          itemCount: reels.length,
-                          onPageChanged: controller.onPageChanged,
-                          itemBuilder: (context, index) {
-                            return Obx(
-                              () {
-                                bool isLoading = controller.isLoading.value;
-                                return isLoading
-                                    ? Center(child: CupertinoActivityIndicator(color: textLightGrey(context)))
-                                    : ReelPage(
-                                        reelData: reels[index],
-                                        autoPlay: index == controller.currentIndex.value,
-                                        likeKey: GlobalKey(),
-                                        reelsScreenController: controller,
-                                        onUpdateReelData: controller.onUpdateReelData,
-                                        isHomePage: widget.isHomePage);
-                              },
-                            );
-                          },
-                        );
-                      }),
-                      HashTagAndMentionUserView(helper: controller.commentHelper),
+                      Obx(
+                        () {
+                          return Stack(
+                            children: [
+                              if (controller.reels.isEmpty)
+                                widget.isLoading?.value == true
+                                    ? Shimmer.fromColors(
+                                        baseColor: Colors.black,
+                                        highlightColor: const Color(0x00404040),
+                                        child: Container(
+                                          color: whitePure(context),
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                      )
+                                    : NoDataWidgetWithScroll(
+                                        title: LKey.reelsEmptyTitle.tr,
+                                        description: LKey.reelsEmptyDescription.tr)
+                              else
+                                VisibilityDetector(
+                                  key: Key('reels_list_${widget.pageType}'),
+                                  onVisibilityChanged: (info) {
+                                    if (info.visibleFraction == 1) {
+                                      if (controller.players.isEmpty) {
+                                        controller.initVideoPlayer();
+                                      }
+                                    } else {
+                                      controller.pauseAllPlayers();
+                                    }
+                                  },
+                                  child: Obx(
+                                    () => PageView.builder(
+                                      physics: const CustomPageViewScrollPhysics(),
+                                      controller: controller.pageController,
+                                      itemCount: controller.reels.length,
+                                      scrollDirection: Axis.vertical,
+                                      onPageChanged: controller.onPageChanged,
+                                      itemBuilder: (context, index) {
+                                        Post reel = controller.reels[index];
+                                        return Obx(
+                                          () {
+                                            return ReelPage(
+                                              reelData: reel,
+                                              likeKey: GlobalKey(),
+                                              onUpdateReelData: controller.onUpdateReelData,
+                                              videoPlayerController:
+                                                  controller.players[index]?.status ==
+                                                          PlayerStatus.disposed
+                                                      ? null
+                                                      : controller.players[index]?.controller,
+                                              postByIdData: widget.postByIdData,
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )
+                            ],
+                          );
+                        },
+                      ),
+                      if (widget.pageType != ReelPageType.home)
+                        HashTagAndMentionUserView(helper: controller.commentHelper),
                     ],
                   ),
                 ),

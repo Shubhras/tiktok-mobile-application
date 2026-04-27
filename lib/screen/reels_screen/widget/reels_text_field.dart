@@ -5,6 +5,7 @@ import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/post_story/post_model.dart';
 import 'package:shortzz/screen/comment_sheet/helper/comment_helper.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
 
@@ -15,13 +16,13 @@ class ReelsTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.isHomePage) {
+    if (controller.reelPageType == ReelPageType.home) {
       return const SizedBox();
     }
     return Obx(
       () {
         CommentHelper helper = controller.commentHelper;
-        Post reel = controller.reels[controller.currentIndex.value];
+        Post reel = controller.reels[controller.position.value];
 
         return AnimatedOpacity(
           opacity: reel.canComment == 1 ? 1 : 0,

@@ -12,6 +12,7 @@ import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/notification_screen/widget/activity_notification_page.dart';
 import 'package:shortzz/screen/post_screen/single_post_screen.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 
 class NotificationScreenController extends BaseController {
   RxInt selectedTabIndex = RxInt(0);
@@ -90,7 +91,8 @@ class NotificationScreenController extends BaseController {
             reels: [fetchedPost].obs,
         position: 0,
         postByIdData: result.data,
-      ));
+            pageType: ReelPageType.notification,
+          ));
     } else if ([PostType.image, PostType.video, PostType.text]
         .contains(postType)) {
       Get.to(() => SinglePostScreen(

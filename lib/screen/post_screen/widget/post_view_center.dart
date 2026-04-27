@@ -19,6 +19,7 @@ import 'package:shortzz/screen/image_view_screen/image_view_screen.dart';
 import 'package:shortzz/screen/post_screen/single_post_screen.dart';
 import 'package:shortzz/screen/post_screen/widget/url_card.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/app_res.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/font_res.dart';
@@ -308,7 +309,8 @@ class PostVideoView extends StatelessWidget {
       onTap: isFromChat
           ? null
           : () {
-              Get.to(() => ReelsScreen(reels: [post!].obs, position: 0));
+              Get.to(
+                  () => ReelsScreen(reels: [post!].obs, position: 0, pageType: ReelPageType.post));
             },
       child: Container(
         margin: margin ?? const EdgeInsets.only(right: 10.0, top: 10),

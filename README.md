@@ -715,8 +715,9 @@ val transformer = Transformer.Builder(context!!)
     .build()
 
 
-    open build.grdel
-    implementation "androidx.media3:media3-transformer:1.9.2"
+open build.grdel
+
+implementation "androidx.media3:media3-transformer:1.9.2"
 implementation "androidx.media3:media3-exoplayer:1.9.2"
 implementation "androidx.media3:media3-common:1.9.2"
 implementation "androidx.media3:media3-muxer:1.9.2"

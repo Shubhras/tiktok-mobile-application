@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:shortzz/common/manager/session_manager.dart';
 import 'package:shortzz/common/widget/custom_back_button.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/theme_res.dart';
 
@@ -24,10 +25,10 @@ class ReelsTopBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (controller.isHomePage)
+                if (controller.reelPageType == ReelPageType.home)
                   Obx(() {
                     final reels = controller.reels;
-                    final index = controller.currentIndex.value;
+                    final index = controller.position.value;
 
                     // Prevent invalid index access
                     if (reels.isEmpty || index < 0 || index >= reels.length) {
@@ -47,7 +48,7 @@ class ReelsTopBar extends StatelessWidget {
                   })
                 else
                   Visibility(
-                    visible: !controller.isHomePage,
+                    visible: controller.reelPageType != ReelPageType.home,
                     replacement: const SizedBox(width: 30),
                     child: CustomBackButton(
                         color: whitePure(context),
@@ -57,7 +58,7 @@ class ReelsTopBar extends StatelessWidget {
                         image: AssetRes.icBackArrow_1),
                   ),
                 if (widget != null) Flexible(child: widget!),
-                if (controller.isHomePage)
+                if (controller.reelPageType == ReelPageType.home)
                   InkWell(
                       onTap: controller.openPostOptionsSheet,
                       child: Image.asset(
@@ -71,8 +72,8 @@ class ReelsTopBar extends StatelessWidget {
                       return const SizedBox(width: 30, height: 30);
                     }
 
-                    bool isVisible =
-                        controller.reels[controller.currentIndex.value].userId != SessionManager.instance.getUserID();
+                    bool isVisible = controller.reels[controller.position.value].userId !=
+                        SessionManager.instance.getUserID();
 
                     return Visibility(
                       visible: isVisible,

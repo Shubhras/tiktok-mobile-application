@@ -25,6 +25,7 @@ import 'package:shortzz/screen/live_stream/livestream_screen/audience/live_strea
 import 'package:shortzz/screen/live_stream/livestream_screen/host/livestream_host_screen.dart';
 import 'package:shortzz/screen/post_screen/single_post_screen.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/const_res.dart';
 import 'package:shortzz/utilities/firebase_const.dart';
 
@@ -217,7 +218,12 @@ class FirebaseNotificationManager {
 
         if (post.postType == PostType.reel) {
           controller.selectedPageIndex.value = 5;
-          Get.to(() => ReelsScreen(reels: [post].obs, position: 0, postByIdData: result.data));
+          Get.to(() => ReelsScreen(
+                reels: [post].obs,
+                position: 0,
+                postByIdData: result.data,
+                pageType: ReelPageType.notification,
+              ));
         } else if ([PostType.text, PostType.image, PostType.video].contains(post.postType)) {
           controller.selectedPageIndex.value = 1;
           await Get.to(() =>

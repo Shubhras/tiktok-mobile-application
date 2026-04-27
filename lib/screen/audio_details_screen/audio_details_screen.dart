@@ -9,6 +9,7 @@ import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/post_story/music/music_model.dart';
 import 'package:shortzz/screen/audio_details_screen/audio_sheet.dart';
 import 'package:shortzz/screen/audio_details_screen/audio_sheet_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
@@ -20,8 +21,7 @@ class AudioDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        Get.put(AudioDetailsScreenController(music), tag: '${music.value?.id}');
+    final controller = Get.put(AudioDetailsScreenController(music), tag: '${music.value?.id}');
     return Scaffold(
       body: Column(
         children: [
@@ -44,9 +44,11 @@ class AudioDetailsScreen extends StatelessWidget {
           AudioDetailsProfile(controller: controller),
           Expanded(
               child: ReelList(
-                  reels: controller.reelPosts,
-                  isLoading: controller.isLoading,
-                  onFetchMoreData: controller.fetchReelPostsByMusic))
+            reels: controller.reelPosts,
+            isLoading: controller.isLoading,
+            onFetchMoreData: controller.fetchReelPostsByMusic,
+            pageType: ReelPageType.audio,
+          ))
         ],
       ),
     );

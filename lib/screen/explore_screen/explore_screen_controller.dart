@@ -7,8 +7,8 @@ import 'package:shortzz/model/post_story/post_model.dart';
 import 'package:shortzz/screen/hashtag_screen/hashtag_screen.dart';
 import 'package:shortzz/screen/post_screen/single_post_screen.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/screen/scan_qr_code_screen/scan_qr_code_screen.dart';
-import 'package:shortzz/screen/video_player_screen/video_player_screen.dart';
 
 class ExploreScreenController extends BaseController {
   Rx<ExplorePageData?> explorePageData = Rx(null);
@@ -33,13 +33,11 @@ class ExploreScreenController extends BaseController {
   void onPostTap(Post post) {
     switch (post.postType) {
       case PostType.reel:
-        Get.to(() => ReelsScreen(reels: [post].obs, position: 0));
+      case PostType.video:
+        Get.to(() => ReelsScreen(reels: [post].obs, position: 0, pageType: ReelPageType.search));
         break;
       case PostType.image:
         Get.to(() => SinglePostScreen(post: post, isFromNotification: false));
-        break;
-      case PostType.video:
-        Get.to(() => VideoPlayerScreen(post: post));
         break;
       case PostType.text:
         break;

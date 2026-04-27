@@ -24,6 +24,7 @@ import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/post_screen/single_post_screen.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/app_res.dart';
 
 class HomeScreenController extends BaseController with GetSingleTickerProviderStateMixin {
@@ -106,7 +107,9 @@ class HomeScreenController extends BaseController with GetSingleTickerProviderSt
         if (model.status == true) {
           Post? post = model.data?.post;
           if (post != null) {
-            await Get.to(() => ReelsScreen(reels: [post].obs, position: 0), preventDuplicates: false);
+            await Get.to(
+                () => ReelsScreen(reels: [post].obs, position: 0, pageType: ReelPageType.home),
+                preventDuplicates: false);
           }
         }
       } else if (key == ShareKeys.user.value) {

@@ -6,6 +6,7 @@ import 'package:shortzz/common/widget/loader_widget.dart';
 import 'package:shortzz/common/widget/post_list.dart';
 import 'package:shortzz/common/widget/reel_list.dart';
 import 'package:shortzz/languages/languages_keys.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/screen/saved_post_screen/saved_post_screen_controller.dart';
 
 class SavedPostScreen extends StatelessWidget {
@@ -43,6 +44,7 @@ class SavedPostScreen extends StatelessWidget {
                       onPageChanged: controller.onChangeTab,
                       children: [
                         ReelList(
+                          pageType: ReelPageType.saved,
                           reels: controller.reels,
                           isLoading: controller.isReelLoading,
                           onFetchMoreData: controller.fetchReel,

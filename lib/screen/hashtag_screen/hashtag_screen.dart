@@ -9,6 +9,7 @@ import 'package:shortzz/common/widget/post_list.dart';
 import 'package:shortzz/common/widget/reel_list.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/screen/hashtag_screen/hashtag_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
 
@@ -56,6 +57,8 @@ class HashtagScreen extends StatelessWidget {
                       onPageChanged: controller.onChangeTab,
                       children: [
                         ReelList(
+                          pageType: ReelPageType.hashtag,
+                          hashTag: hashtag,
                           reels: controller.reels.post,
                           isLoading: controller.isReelLoading,
                           onFetchMoreData: controller.fetchReels,

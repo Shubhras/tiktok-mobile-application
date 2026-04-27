@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:shortzz/common/widget/custom_divider.dart';
 import 'package:shortzz/screen/home_screen/home_screen_controller.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/app_res.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
@@ -20,7 +21,7 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           ReelsScreen(
-            isHomePage: true,
+            pageType: ReelPageType.home,
             reels: controller.reels,
             position: 0,
             isLoading: controller.isLoading,

@@ -7,6 +7,7 @@ import 'package:shortzz/common/widget/reel_list.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/profile_screen/profile_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
 
@@ -38,6 +39,8 @@ class ProfilePageView extends StatelessWidget {
                             reels: controller.reels,
                             isLoading: controller.isReelLoading,
                             onFetchMoreData: controller.fetchReel,
+                            pageType: ReelPageType.user,
+                            user: user,
                             menus: isMe
                                 ? [
                                     ContextMenuElement(

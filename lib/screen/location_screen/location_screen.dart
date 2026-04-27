@@ -11,6 +11,7 @@ import 'package:shortzz/common/widget/post_list.dart';
 import 'package:shortzz/common/widget/reel_list.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/screen/location_screen/location_screen_controller.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
@@ -116,6 +117,8 @@ class LocationScreen extends StatelessWidget {
                                           },
                                           children: [
                                             ReelList(
+                                                pageType: ReelPageType.location,
+                                                hashTag: "${latLng.latitude}/${latLng.longitude}",
                                                 onFetchMoreData:
                                                     controller.fetchReels,
                                                 shrinkWrap: true,

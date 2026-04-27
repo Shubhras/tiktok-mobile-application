@@ -9,6 +9,7 @@ import 'package:shortzz/screen/camera_screen/camera_screen_controller.dart';
 import 'package:shortzz/screen/create_feed_screen/create_feed_screen.dart';
 import 'package:shortzz/screen/create_feed_screen/create_feed_screen_controller.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 
 class ReelPreviewCard extends StatelessWidget {
   final CreateFeedScreenController controller;
@@ -51,7 +52,11 @@ class ReelPreviewCard extends StatelessWidget {
                           thumbnail: content.thumbNail,
                           user: SessionManager.instance.getUser());
 
-                      Get.to(() => ReelsScreen(reels: [reel].obs, position: 0));
+                      Get.to(() => ReelsScreen(
+                            reels: [reel].obs,
+                            position: 0,
+                            pageType: ReelPageType.single,
+                          ));
                     },
                     title: LKey.preview.tr),
                 CustomBlurButton(

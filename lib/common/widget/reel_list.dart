@@ -9,7 +9,9 @@ import 'package:shortzz/common/widget/loader_widget.dart';
 import 'package:shortzz/common/widget/no_data_widget.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/post_story/post_model.dart';
+import 'package:shortzz/model/user_model/user_model.dart';
 import 'package:shortzz/screen/reels_screen/reels_screen.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/asset_res.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
@@ -24,6 +26,9 @@ class ReelList extends StatelessWidget {
   final Function(dynamic)? onBackResponse;
   final bool shrinkWrap;
   final Widget? widget;
+  final ReelPageType pageType;
+  final User? user;
+  final String? hashTag;
 
   const ReelList({
     super.key,
@@ -36,56 +41,67 @@ class ReelList extends StatelessWidget {
     this.shrinkWrap = false,
     this.onBackResponse,
     this.widget,
+    required this.pageType,
+    this.user,
+    this.hashTag,
   });
 
   @override
   Widget build(BuildContext context) {
     return LoadMoreWidget(
       loadMore: onFetchMoreData,
-      child: Obx(
-        () => isLoading.value && reels.isEmpty
-            ? const LoaderWidget()
-            : NoDataView(
-                title: LKey.noUserReelsTitle.tr,
-                description: LKey.noUserReelsDescription.tr,
-                showShow: !isLoading.value && reels.isEmpty,
-                child: GridView.builder(
-                    primary: !shrinkWrap,
-                    shrinkWrap: shrinkWrap,
-                    itemCount: reels.length,
-                    padding: EdgeInsets.only(
-                        left: 1,
-                        right: 1,
-                        top: 1,
-                        bottom: AppBar().preferredSize.height),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 1,
-                            crossAxisSpacing: 1,
-                            mainAxisExtent: 172),
-                    itemBuilder: (context, index) {
-                      Post post = reels[index];
-                      return ReelGridCardView(
-                        onTap: () {
-                          Get.to(
-                                  () => ReelsScreen(
-                                      reels: reels,
-                                      position: index,
-                                      onFetchMoreData: onFetchMoreData,
-                                      widget: widget),
-                                  preventDuplicates: false)
-                              ?.then((value) {
-                            onBackResponse?.call(value);
-                          });
-                        },
-                        post: post,
-                        isPinShow: isPinShow,
-                        menus: menus,
-                      );
-                    }),
-              ),
-      ),
+      child: Obx(() {
+        if (isLoading.value && reels.isEmpty) {
+          return const LoaderWidget();
+        }
+
+        return NoDataView(
+          title: LKey.noUserReelsTitle.tr,
+          description: LKey.noUserReelsDescription.tr,
+          showShow: !isLoading.value && reels.isEmpty,
+          child: GridView.builder(
+            primary: !shrinkWrap,
+            shrinkWrap: shrinkWrap,
+            itemCount: reels.length,
+            padding: EdgeInsets.only(
+              left: 1,
+              right: 1,
+              top: 1,
+              bottom: AppBar().preferredSize.height,
+            ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 1,
+              crossAxisSpacing: 1,
+              mainAxisExtent: 172,
+            ),
+            itemBuilder: (context, index) {
+              final post = reels[index];
+              return ReelGridCardView(
+                onTap: () {
+                  Get.to(
+                    () => ReelsScreen(
+                      reels: reels,
+                      position: index,
+                      onFetchMoreData: onFetchMoreData,
+                      widget: widget,
+                      pageType: pageType,
+                      hashTag: hashTag,
+                      user: user,
+                    ),
+                    preventDuplicates: false,
+                  )?.then((value) {
+                    onBackResponse?.call(value);
+                  });
+                },
+                post: post,
+                isPinShow: isPinShow,
+                menus: menus,
+              );
+            },
+          ),
+        );
+      }),
     );
   }
 }
@@ -96,8 +112,7 @@ class ReelGridCardView extends StatelessWidget {
   final bool isPinShow;
   final List<ContextMenuElement>? menus;
 
-  const ReelGridCardView(
-      {super.key, this.post, this.onTap, this.isPinShow = false, this.menus});
+  const ReelGridCardView({super.key, this.post, this.onTap, this.isPinShow = false, this.menus});
 
   @override
   Widget build(BuildContext context) {
@@ -132,11 +147,7 @@ class ReelGridCardView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    AssetRes.icPlay1,
-                    height: 15,
-                    width: 18,
-                  ),
+                  Image.asset(AssetRes.icPlay1, height: 15, width: 18),
                   Text(
                     (post?.views?.toInt() ?? 0).numberFormat,
                     style: TextStyleCustom.outFitMedium500(

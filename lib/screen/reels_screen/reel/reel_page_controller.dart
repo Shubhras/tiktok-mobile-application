@@ -34,9 +34,14 @@ class ReelController extends BaseController {
   Timer? _debounce;
   final Function(Post reelData) onUpdateReelData;
 
-  ReelController(this.reelData, this.onUpdateReelData) {
+  ReelController(this.reelData, this.onUpdateReelData);
+
+  @override
+  void onReady() {
+    super.onReady();
     reelData.listen((p0) {
-      if (p0.postType == PostType.video && Get.isRegistered<PostScreenController>(tag: '${p0.id}')) {
+      if (p0.postType == PostType.video &&
+          Get.isRegistered<PostScreenController>(tag: '${p0.id}')) {
         final controller = Get.find<PostScreenController>(tag: '${p0.id}');
         controller.updatePost(p0);
       }
@@ -54,7 +59,9 @@ class ReelController extends BaseController {
   updateReelData({Post? reel, bool isIncreaseCoin = false}) {
     if (reel != null) {
       if (isIncreaseCoin) {
-        reelData.update((val) => val?.increaseViews());
+        reelData.update((val) {
+          val?.views = (val.views ?? 0) + 1;
+        });
       } else {
         reelData.value = reel;
       }
@@ -80,11 +87,6 @@ class ReelController extends BaseController {
     _debounce = Timer(const Duration(milliseconds: 700), () async {
       try {
         await (reelData.value.isLiked == true ? _likePostApi(reelId) : _disLikePostApi(reelId));
-        // if (reelData.value.postType == PostType.video &&
-        //     Get.isRegistered<PostScreenController>(tag: '$reelId')) {
-        //   final controller = Get.find<PostScreenController>(tag: '$reelId');
-        //   controller.₹₹1(reelData.value);
-        // }
       } catch (e) {
         Loggers.error('ERROR IN LIKE  REEL $e');
       }
@@ -112,7 +114,7 @@ class ReelController extends BaseController {
 
   Future<void> onCommentTap({PostByIdData? postByIdData, bool isFromNotification = false}) async {
     FocusManager.instance.primaryFocus?.unfocus();
-
+    print("Sam max");
     await Get.bottomSheet(
         CommentSheet(
           replyComment: postByIdData?.reply,
@@ -193,7 +195,6 @@ class ReelController extends BaseController {
 
   void onAudioTap(Music? music) async {
     FocusManager.instance.primaryFocus?.unfocus();
-
     await Get.bottomSheet(AudioSheet(music: music), isScrollControlled: true);
   }
 
@@ -219,9 +220,9 @@ class ReelController extends BaseController {
 
   void notifyCommentSheet(PostByIdData? data) {
     if (data != null && (data.comment != null || data.reply != null)) {
-      DebounceAction.shared.call(() {
+      Future.delayed(const Duration(milliseconds: 1500), () {
         onCommentTap(postByIdData: data, isFromNotification: true);
-      }, milliseconds: 1000);
+      });
     }
   }
 }

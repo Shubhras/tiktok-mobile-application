@@ -43,6 +43,7 @@ import 'package:shortzz/screen/report_sheet/report_sheet.dart';
 import 'package:shortzz/screen/story_view_screen/story_view_screen.dart';
 import 'package:shortzz/utilities/app_res.dart';
 import 'package:shortzz/utilities/color_res.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/utilities/firebase_const.dart';
 import 'package:shortzz/utilities/style_res.dart';
 
@@ -511,12 +512,12 @@ class ChatScreenController extends BlockUserController
     }
     FocusManager.instance.primaryFocus?.unfocus();
     switch (action) {
-      case ChatAction.gift:
-        pickGift();
-        break;
-      case ChatAction.audio:
-        _pickAudio();
-        break;
+      // case ChatAction.gift:
+      //   pickGift();
+      //   break;
+      // case ChatAction.audio:
+      //   _pickAudio();
+      //   break;
       case ChatAction.sticker:
         pickSticker();
         break;
@@ -834,8 +835,7 @@ class ChatScreenController extends BlockUserController
     switch (type) {
       case PostType.reel:
       case PostType.video:
-        Get.to(() =>
-            ReelsScreen(reels: [post].obs, position: 0, isFromChat: true));
+        Get.to(() => ReelsScreen(reels: [post].obs, position: 0, pageType: ReelPageType.single));
         break;
       case PostType.image:
       case PostType.text:

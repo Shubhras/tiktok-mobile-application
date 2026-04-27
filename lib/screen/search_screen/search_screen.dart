@@ -8,6 +8,7 @@ import 'package:shortzz/common/widget/search_result_tile.dart';
 import 'package:shortzz/common/widget/user_list.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/screen/create_feed_screen/widget/location_sheet.dart';
+import 'package:shortzz/screen/reels_screen/widget/reel_page_type.dart';
 import 'package:shortzz/screen/search_screen/search_screen_controller.dart';
 import 'package:shortzz/utilities/app_res.dart';
 import 'package:shortzz/utilities/asset_res.dart';
@@ -51,9 +52,7 @@ class SearchScreen extends StatelessWidget {
                                           controller.onChanged(0);
                                         },
                                         child: Image.asset(AssetRes.icClose,
-                                            width: 20,
-                                            height: 20,
-                                            color: textLightGrey(context)),
+                                            width: 20, height: 20, color: textLightGrey(context)),
                                       ),
                               ),
                             ))
@@ -73,22 +72,18 @@ class SearchScreen extends StatelessWidget {
                       return InkWell(
                         onTap: () {
                           controller.pageController.animateToPage(index,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.linear);
+                              duration: const Duration(milliseconds: 300), curve: Curves.linear);
                         },
                         child: Obx(
                           () {
-                            bool isSelected =
-                                controller.selectedTabIndex.value == tabs;
+                            bool isSelected = controller.selectedTabIndex.value == tabs;
                             return Text(
                               tabs.title,
                               style: isSelected
                                   ? TextStyleCustom.outFitRegular400(
-                                      fontSize: 15,
-                                      color: textDarkGrey(context))
+                                      fontSize: 15, color: textDarkGrey(context))
                                   : TextStyleCustom.outFitLight300(
-                                      fontSize: 15,
-                                      color: textLightGrey(context)),
+                                      fontSize: 15, color: textLightGrey(context)),
                             );
                           },
                         ),
@@ -110,6 +105,7 @@ class SearchScreen extends StatelessWidget {
                   onFetchMoreData: controller.searchPosts,
                 ),
                 ReelList(
+                    pageType: ReelPageType.search,
                     reels: controller.reels,
                     isLoading: controller.isReelsLoading,
                     onFetchMoreData: controller.searchReels),
@@ -128,8 +124,7 @@ class SearchScreen extends StatelessWidget {
                   onTap: controller.onHashTagTap,
                   image: AssetRes.icHashtag,
                   getDisplayText: (p0) => '${AppRes.hash}${p0.hashtag ?? ''}',
-                  getDisplayDescription: (p0) =>
-                      '${p0.postCount} ${LKey.posts.tr}',
+                  getDisplayDescription: (p0) => '${p0.postCount} ${LKey.posts.tr}',
                   isLoading: controller.isHashTagsLoading,
                   loadMore: controller.searchHashTags,
                 ),
