@@ -1528,15 +1528,9 @@ PODS:
   - permission_handler_apple (9.3.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - purchases_flutter (9.16.0):
-    - Flutter
-    - PurchasesHybridCommon (= 17.54.0)
-  - PurchasesHybridCommon (17.54.0):
-    - RevenueCat (= 5.67.0)
   - RecaptchaInterop (101.0.0)
   - retrytech_plugin (0.0.1):
     - Flutter
-  - RevenueCat (5.67.0)
   - SDWebImage (5.21.7):
     - SDWebImage/Core (= 5.21.7)
   - SDWebImage/Core (5.21.7)
@@ -1592,7 +1586,6 @@ DEPENDENCIES:
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/darwin`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - retrytech_plugin (from `.symlinks/plugins/retrytech_plugin/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -1642,9 +1635,7 @@ SPEC REPOS:
     - MLKitVision
     - nanopb
     - PromisesObjC
-    - PurchasesHybridCommon
     - RecaptchaInterop
-    - RevenueCat
     - SDWebImage
     - SDWebImageWebPCoder
 
@@ -1701,8 +1692,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
-  purchases_flutter:
-    :path: ".symlinks/plugins/purchases_flutter/ios"
   retrytech_plugin:
     :path: ".symlinks/plugins/retrytech_plugin/ios"
   share_plus:
@@ -1787,11 +1776,8 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  purchases_flutter: 3da269c2f4a1fbb7bc4b12d2ef632b06412b1ecc
-  PurchasesHybridCommon: 6a8f4e30952167d2afaccf17ebcf8f8107060e4c
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   retrytech_plugin: 93f66c92b68b6a247fd44ad23e9ff6750489b9c7
-  RevenueCat: f0d05079b59c33c645293bbc1fa78469ea7fcae7
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageWebPCoder: 0e06e365080397465cc73a7a9b472d8a3bd0f377
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a

@@ -10,7 +10,7 @@ import 'package:shortzz/common/manager/session_manager.dart';
 import 'package:shortzz/common/service/api/common_service.dart';
 import 'package:shortzz/common/service/api/notification_service.dart';
 import 'package:shortzz/common/service/api/user_service.dart';
-import 'package:shortzz/common/service/subscription/subscription_manager.dart';
+// import 'package:shortzz/common/service/subscription/subscription_manager.dart';
 import 'package:shortzz/languages/dynamic_translations.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/general/settings_model.dart';
@@ -189,7 +189,7 @@ class AuthScreenController extends BaseController {
           token: userData?.deviceToken,
           authorizationToken: userData?.token?.authToken);
     }
-    SubscriptionManager.shared.login('${userData?.id}');
+    // SubscriptionManager.shared.login('${userData?.id}');
     if (userData != null) {
       // Subscribe My Following Ids For Live streaming notification
       return userData;

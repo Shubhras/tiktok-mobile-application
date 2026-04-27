@@ -114,7 +114,7 @@ dependencies:
   flutter_local_notifications: ^19.5.0
 
   ### 💳 Purchases & Payments
-  purchases_flutter: ^9.9.3
+  # purchases_flutter: ^9.9.3
 
   ### 🧰 Utilities
   intl: ^0.20.2
