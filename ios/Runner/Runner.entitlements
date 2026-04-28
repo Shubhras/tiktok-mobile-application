@@ -10,8 +10,8 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:&lt;BASE URL&gt;</string>
-		<string>applinks:&lt;BASE URL&gt;?mode=developer</string>
+		<string>applinks:tiktokkindia.com</string>
+		<string>applinks:tiktokkindia.com?mode=developer</string>
 	</array>
 </dict>
 </plist>

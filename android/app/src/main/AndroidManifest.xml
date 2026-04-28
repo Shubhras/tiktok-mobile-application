@@ -58,7 +58,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Custom scheme -->
-                <data android:scheme="shortzz" />
+                <data android:scheme="zoyoshorts" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
