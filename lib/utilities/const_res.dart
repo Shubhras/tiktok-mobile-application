@@ -1,4 +1,4 @@
-const String baseURL = 'https://tiktokkindia.com/';
+const String baseURL = 'https://zoyoshorts.com/';
 const String apiURL = '${baseURL}api/';
 const String apiKey = 'retry123';
 

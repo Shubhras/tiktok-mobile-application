@@ -215,24 +215,25 @@ class ShareSheetWidgetController extends BaseController {
       final localPath = await PlatformPathExtension.localPath;
       String finalOutput = videoInputPath;
       // Watermarking (if enabled)
-      final isWatermarkEnabled = setting?.watermarkStatus == 1;
+      // when watermark is ready then uncomment this line and remove the below line
+      
+      // final isWatermarkEnabled = setting?.watermarkStatus == 1; 
+      // if (isWatermarkEnabled) {
+      //   String outputPath = '${localPath}watermark_video.mp4';
 
-      if (isWatermarkEnabled) {
-        String outputPath = '${localPath}watermark_video.mp4';
+      //   if (waterMarkPath.isEmpty) {
+      //     return showSnackBar(LKey.downloadingFailed.tr);
+      //   }
+      //   bool? result = await _retrytechPlugin.addWaterMarkInVideo(
+      //       inputPath: videoInputPath,
+      //       thumbnailPath: waterMarkPath.value,
+      //       username: '@${reel?.user?.username ?? AppRes.appName}',
+      //       outputPath: outputPath);
 
-        if (waterMarkPath.isEmpty) {
-          return showSnackBar(LKey.downloadingFailed.tr);
-        }
-        bool? result = await _retrytechPlugin.addWaterMarkInVideo(
-            inputPath: videoInputPath,
-            thumbnailPath: waterMarkPath.value,
-            username: '@${reel?.user?.username ?? AppRes.appName}',
-            outputPath: outputPath);
-
-        if (result == true) {
-          finalOutput = outputPath;
-        }
-      }
+      //   if (result == true) {
+      //     finalOutput = outputPath;
+      //   }
+      // }
 
       // Save to gallery
       await Gal.putVideo(finalOutput);

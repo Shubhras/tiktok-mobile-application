@@ -233,10 +233,17 @@ class RecordingControlButton extends StatelessWidget {
           child: CustomPaint(
             painter: DashedCirclePainter(
                 controller.progress / controller.selectedSecond.value),
-            child: Center(
-              child: controller.isRecording.value
-                  ? _buildPauseIndicator(context)
-                  : _buildRecordButton(),
+            // child: Center(
+            //   child: controller.isRecording.value
+            //       ? _buildPauseIndicator(context)
+            //       : _buildRecordButton(),
+            // ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                _buildRecordButton(),
+                if (controller.isRecording.value) _buildPauseIndicator(context),
+              ],
             ),
           ),
         ),
@@ -269,10 +276,22 @@ class RecordingControlButton extends StatelessWidget {
     );
   }
 
+  // Widget _buildRecordButton() {
+  //   return Container(
+  //     width: 65,
+  //     height: 65,
+  //     decoration: const BoxDecoration(
+  //       shape: BoxShape.circle,
+  //       color: Colors.red,
+  //     ),
+  //   );
+  // }
   Widget _buildRecordButton() {
-    return Container(
-      width: 65,
-      height: 65,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      width: controller.isRecording.value ? 70 : 55,
+      height: controller.isRecording.value ? 70 : 55,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.red,
