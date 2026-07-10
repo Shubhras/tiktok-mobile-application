@@ -11,7 +11,7 @@ import 'package:shortzz/screen/blocked_user_screen/blocked_user_screen.dart';
 import 'package:shortzz/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:shortzz/screen/qr_code_screen/qr_code_screen.dart';
 import 'package:shortzz/screen/saved_post_screen/saved_post_screen.dart';
-// import 'package:shortzz/screen/select_language_screen/select_language_screen.dart';
+import 'package:shortzz/screen/select_language_screen/select_language_screen.dart';
 import 'package:shortzz/screen/settings_screen/settings_screen_controller.dart';
 import 'package:shortzz/screen/settings_screen/widget/notifications_page.dart';
 import 'package:shortzz/screen/settings_screen/widget/setting_icon_text_with_arrow.dart';
@@ -57,15 +57,15 @@ class SettingsScreen extends StatelessWidget {
                   Get.to(() => const SavedPostScreen());
                 },
               ),
-              // SettingIconTextWithArrow(
-              //   icon: AssetRes.icLanguage_1,
-              //   title: LKey.languages,
-              //   onTap: () {
-              //     Get.to(() => const SelectLanguageScreen(
-              //         languageNavigationType:
-              //             LanguageNavigationType.fromSetting));
-              //   },
-              // ),
+              SettingIconTextWithArrow(
+                icon: AssetRes.icLanguage_1,
+                title: LKey.languages,
+                onTap: () {
+                  Get.to(() => const SelectLanguageScreen(
+                      languageNavigationType:
+                          LanguageNavigationType.fromSetting));
+                },
+              ),
               SettingIconTextWithArrow(
                 icon: AssetRes.icBlock,
                 title: LKey.blockedUsers,

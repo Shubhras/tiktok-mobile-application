@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shortzz/common/manager/logger.dart';
 import 'package:shortzz/common/widget/loader_widget.dart';
 import 'package:shortzz/utilities/text_style_custom.dart';
 import 'package:shortzz/utilities/theme_res.dart';
+
 
 class BaseController extends FullLifeCycleController {
   RxBool isLoading = false.obs;
@@ -11,17 +13,33 @@ class BaseController extends FullLifeCycleController {
   void showLoader({bool barrierDismissible = true}) async {
     if (isLoading.value) return;
     if (Get.isSnackbarOpen) {
-      Get.back();
+      try {
+        Get.back();
+      } catch (e) {
+        Loggers.error("Error closing snackbar: $e");
+      }
     }
     isLoading.value = true;
-    await Get.dialog(const LoaderWidget(),
-        barrierDismissible: barrierDismissible);
+    try {
+      await Get.dialog(const LoaderWidget(),
+          barrierDismissible: barrierDismissible);
+    } catch (e) {
+      Loggers.error("Error showing dialog: $e");
+    }
     isLoading.value = false;
   }
 
   void stopLoader() {
     if (Get.isDialogOpen == true) {
-      Get.back();
+      try {
+        Navigator.of(Get.overlayContext!).pop();
+      } catch (e) {
+        try {
+          Get.back();
+        } catch (err) {
+          Loggers.error("Error closing loader dialog: $err");
+        }
+      }
     }
   }
 

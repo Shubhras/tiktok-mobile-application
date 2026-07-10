@@ -228,8 +228,9 @@ class RecordingControlButton extends StatelessWidget {
         height: 90,
         child: GestureDetector(
           onTap: controller.onPlayPauseToggle,
-          onLongPressStart: (_) => controller.onPlayPauseToggle(type: 1),
+          onLongPressStart: controller.onLongPressStart,
           onLongPressEnd: (_) => controller.onPlayPauseToggle(type: 2),
+          onLongPressMoveUpdate: controller.onLongPressMoveUpdate,
           child: CustomPaint(
             painter: DashedCirclePainter(
                 controller.progress / controller.selectedSecond.value),

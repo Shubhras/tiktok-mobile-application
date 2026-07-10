@@ -42,6 +42,7 @@ class CameraScreen extends StatelessWidget {
               ),
             ),
             _buildCameraUI(context, controller),
+            _buildZoomIndicator(context, controller),
           ],
         ),
       ),
@@ -53,22 +54,62 @@ class CameraScreen extends StatelessWidget {
       aspectRatio: 0.52,
       child: ClipSmoothRect(
         radius: SmoothBorderRadius(cornerRadius: 20, cornerSmoothing: 1),
-        child: controller.isDeepAr
-            ? Obx(
-                () {
-                  DeepArControllerPlus deepArControllerPlus =
-                      controller.deepArControllerPlus.value;
-                  return controller.isDeepARInitialized.value
-                      ? Transform.scale(
-                          scale: deepArControllerPlus.aspectRatio *
-                              0.62, //change value as needed
-                          child: DeepArPreviewPlus(deepArControllerPlus),
-                        )
-                      : const LoaderWidget();
-                },
-              )
-            : RetrytechPlugin.shared.cameraView,
+        child: GestureDetector(
+          onScaleStart: controller.onScaleStart,
+          onScaleUpdate: controller.onScaleUpdate,
+          onDoubleTap: controller.onDoubleTapZoom,
+          child: Obx(() {
+            double currentScale = controller.cameraScale.value;
+            if (controller.isDeepAr) {
+              DeepArControllerPlus deepArControllerPlus =
+                  controller.deepArControllerPlus.value;
+              return controller.isDeepARInitialized.value
+                  ? Transform.scale(
+                      scale: deepArControllerPlus.aspectRatio *
+                          0.62 *
+                          currentScale,
+                      child: DeepArPreviewPlus(deepArControllerPlus),
+                    )
+                  : const LoaderWidget();
+            } else {
+              return RetrytechPlugin.shared.cameraView;
+            }
+          }),
+        ),
       ),
+    );
+  }
+
+  Widget _buildZoomIndicator(
+      BuildContext context, CameraScreenController controller) {
+    return Positioned(
+      bottom: 220,
+      child: Obx(() {
+        double currentScale = controller.cameraScale.value;
+        return AnimatedOpacity(
+          opacity: currentScale > 1.0 ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 200),
+          child: GestureDetector(
+            onTap: controller.onZoomReset,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white24, width: 1),
+              ),
+              child: Text(
+                '${currentScale.toStringAsFixed(1)}x',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 

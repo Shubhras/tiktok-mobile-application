@@ -1,15 +1,88 @@
+//plugins {
+//    id "com.android.application"
+//    id "kotlin-android"
+//    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+//    id "dev.flutter.flutter-gradle-plugin"
+//    id "com.google.gms.google-services"
+//
+//}
+//
+//// 🔥 ADD THIS BLOCK
+//def keystoreProperties = new Properties()
+//def keystorePropertiesFile = rootProject.file("key.properties")
+//if (keystorePropertiesFile.exists()) {
+//    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//}
+//
+//android {
+//    namespace = "com.digi.zoyoshorts"
+//    compileSdk = 36
+//    ndkVersion "29.0.14033849"
+//
+//    compileOptions {
+//        sourceCompatibility = JavaVersion.VERSION_11
+//        targetCompatibility = JavaVersion.VERSION_11
+//        coreLibraryDesugaringEnabled true
+//    }
+//
+//    kotlinOptions {
+//        jvmTarget = JavaVersion.VERSION_11
+//    }
+//
+//    defaultConfig {
+//        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+//        applicationId = "com.digi.zoyoshorts"
+//        // You can update the following values to match your application needs.
+//        // For more information, see: https://flutter.dev/to/review-gradle-config.
+//        minSdk = 24
+//        targetSdk = 36
+//        versionCode = 3
+//        versionName = '1.0.2'
+//    }
+//
+//        // ✅ ADD THIS PART
+//    signingConfigs {
+//        release {
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+//        }
+//    }
+//
+//    buildTypes {
+//        release {
+//            // shrinkResources false
+//            // minifyEnabled false
+//            // // TODO: Add your own signing config for the release build.
+//            // // Signing with the debug keys for now, so `flutter run --release` works.
+//            // signingConfig = signingConfigs.debug
+//            shrinkResources false
+//            minifyEnabled false
+//            // TODO: Add your own signing config for the release build.
+//            // Signing with the debug keys for now, so `flutter run --release` works.
+//            signingConfig = signingConfigs.release
+//        }
+//    }
+//
+//}
+//dependencies {
+//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+//}
+//flutter {
+//    source = "../.."
+//}
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
     id "com.google.gms.google-services"
-
 }
 
-// 🔥 ADD THIS BLOCK
+
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file("key.properties")
+
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
@@ -30,45 +103,46 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.digi.zoyoshorts"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 24
         targetSdk = 36
         versionCode = 3
-        versionName = '1.0.2'
+        versionName = "1.0.2"
     }
 
-        // ✅ ADD THIS PART
+    // =========================
+    // SIGNING CONFIG (SAFE)
+    // =========================
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            // shrinkResources false
-            // minifyEnabled false
-            // // TODO: Add your own signing config for the release build.
-            // // Signing with the debug keys for now, so `flutter run --release` works.
-            // signingConfig = signingConfigs.debug
             shrinkResources false
             minifyEnabled false
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.release
+
+            // SAFE FALLBACK (prevents crash)
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
     }
-
 }
+
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }
+
 flutter {
     source = "../.."
 }

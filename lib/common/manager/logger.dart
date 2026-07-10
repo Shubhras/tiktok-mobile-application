@@ -1,19 +1,18 @@
-import 'dart:developer' as developer;
 
 class Loggers {
   static void info(Object? msg) {
-    developer.log('$msg', name: 'INFO');
+    print('INFO: $msg');
   }
 
   static void success(Object? msg) {
-    developer.log('✅✅✅: $msg', name: 'SUCCESS');
+    print('SUCCESS: ✅✅✅: $msg');
   }
 
   static void warning(Object? msg) {
-    developer.log('⚠️⚠️⚠️: $msg', name: 'WARNING');
+    print('WARNING: ⚠️⚠️⚠️: $msg');
   }
 
   static void error(Object? msg) {
-    developer.log('🔴🔴🔴: $msg', name: 'ERROR');
+    print('ERROR: 🔴🔴🔴: $msg');
   }
 }

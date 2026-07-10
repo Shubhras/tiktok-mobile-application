@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:deepar_flutter_plus/deepar_flutter_plus.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:retrytech_plugin/retrytech_plugin.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_new/return_code.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/extensions/string_extension.dart';
 import 'package:shortzz/common/functions/media_picker_helper.dart';
@@ -29,18 +31,14 @@ import 'package:shortzz/utilities/asset_res.dart';
 
 class CameraScreenController extends BaseController
     with GetSingleTickerProviderStateMixin {
-  // Constants
-  static const _progressUpdateInterval = 10; // milliseconds
+  static const _progressUpdateInterval = 10;
   RxList<int> secondsList = AppRes.secondList.obs;
 
-  // Dependencies
   final CameraScreenType cameraType;
   final PlayerController audioPlayer = PlayerController();
   final Rx<DeepArControllerPlus> deepArControllerPlus =
       DeepArControllerPlus().obs;
   RxBool isSecondListShow = true.obs;
-
-  // State variables
 
   RxInt selectedSecond = AppRes.secondList.first.obs;
   RxBool isTorchOn = false.obs;
@@ -50,13 +48,15 @@ class CameraScreenController extends BaseController
   Rx<SelectedMusic?> selectedMusic = Rx(null);
   RxDouble progress = 0.0.obs;
   RxBool isDeepARInitialized = false.obs;
+  RxDouble cameraScale = 1.0.obs;
+  double _baseScale = 1.0;
+  List<ZoomEvent> zoomEvents = [];
 
   Setting? get appSetting => SessionManager.instance.getSettings();
   late Rx<DeepARFilters> selectedEffect;
 
   bool get isDeepAr => appSetting?.isDeepAr == 1;
 
-  // Private variables
   Timer? _progressTimer;
   Completer<void>? _cameraOperationCompleter;
 
@@ -76,7 +76,6 @@ class CameraScreenController extends BaseController
     super.onClose();
   }
 
-  // Initialization methods
   Future<void> _initialize() async {
     _initCamera();
     _initData();
@@ -142,7 +141,6 @@ class CameraScreenController extends BaseController
 
   Future<void> _initDeepArCamera() async {
     try {
-      // Initialize DeepAR
       await deepArControllerPlus.value.initialize(
           androidLicenseKey: appSetting?.deeparAndroidKey,
           iosLicenseKey: appSetting?.deeparIOSKey,
@@ -155,7 +153,6 @@ class CameraScreenController extends BaseController
     }
   }
 
-  // Cleanup methods
   void _cleanUpResources() {
     _progressTimer?.cancel();
     _cameraOperationCompleter?.complete();
@@ -175,7 +172,6 @@ class CameraScreenController extends BaseController
     }
   }
 
-  // Permission handling
   void showPermissionDeniedSheet() {
     Get.bottomSheet(
       ConfirmationSheet(
@@ -192,7 +188,6 @@ class CameraScreenController extends BaseController
     );
   }
 
-  // Media handling methods
   Future<void> onMediaTap() async {
     try {
       switch (cameraType) {
@@ -237,11 +232,11 @@ class CameraScreenController extends BaseController
   }
 
   Future<void> _navigateToEditScreen(
-    PostStoryContentType type,
-    String contentPath,
-    String thumbnailPath,
-    LinearGradient bgColor,
-  ) async {
+      PostStoryContentType type,
+      String contentPath,
+      String thumbnailPath,
+      LinearGradient bgColor,
+      ) async {
     final content = PostStoryContent(
       type: type,
       content: contentPath,
@@ -254,7 +249,80 @@ class CameraScreenController extends BaseController
     navigateCameraEditScreen(content);
   }
 
-  // Camera control methods
+  double _zoomScaleAtDragStart = 1.0;
+
+  void onLongPressStart(LongPressStartDetails details) {
+    _zoomScaleAtDragStart = cameraScale.value;
+    onPlayPauseToggle(type: 1);
+  }
+
+  void onLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+    if (!isRecording.value) return;
+    double newScale =
+        (_zoomScaleAtDragStart - details.localOffsetFromOrigin.dy / 150.0)
+            .clamp(1.0, 4.0);
+    cameraScale.value = newScale;
+
+    if (!isDeepAr) {
+      RetrytechPlugin.shared.setZoom(newScale);
+    } else {
+      _addZoomEvent(newScale);
+    }
+  }
+
+  void onScaleStart(ScaleStartDetails details) {
+    _baseScale = cameraScale.value;
+  }
+
+  void onScaleUpdate(ScaleUpdateDetails details) {
+    double newScale = (_baseScale * details.scale).clamp(1.0, 4.0);
+    cameraScale.value = newScale;
+
+    if (!isDeepAr) {
+      RetrytechPlugin.shared.setZoom(newScale);
+    } else if (isRecording.value) {
+      _addZoomEvent(newScale);
+    }
+  }
+
+  void onDoubleTapZoom() {
+    double targetScale = cameraScale.value > 1.0 ? 1.0 : 2.0;
+    cameraScale.value = targetScale;
+
+    if (!isDeepAr) {
+      RetrytechPlugin.shared.setZoom(targetScale);
+    } else if (isRecording.value) {
+      _addZoomEvent(targetScale);
+    }
+  }
+
+  void onZoomReset() {
+    cameraScale.value = 1.0;
+    if (!isDeepAr) {
+      RetrytechPlugin.shared.setZoom(1.0);
+    } else if (isRecording.value) {
+      _addZoomEvent(1.0);
+    }
+  }
+
+  void _addZoomEvent(double scale) {
+    final elapsedMs = (progress.value * 1000).toInt();
+    if (zoomEvents.isNotEmpty) {
+      final lastEvent = zoomEvents.last;
+      final double diff = (lastEvent.scale - scale).abs();
+      final int timeDiff = elapsedMs - lastEvent.time.inMilliseconds;
+
+      if (timeDiff < 50 && scale != 1.0 && scale != 4.0) {
+        return;
+      }
+      if (diff < 0.01 && scale != 1.0 && scale != 4.0) {
+        return;
+      }
+    }
+    zoomEvents.add(ZoomEvent(Duration(milliseconds: elapsedMs), scale));
+    Loggers.info('Recorded Zoom Event: ${elapsedMs}ms -> ${scale}x');
+  }
+
   void onToggleFlash() {
     if (isDeepAr) {
       deepArControllerPlus.value.toggleFlash();
@@ -276,7 +344,6 @@ class CameraScreenController extends BaseController
     }
   }
 
-  // Video recording methods
   Future<void> onVideoRecordingStart() async {
     if (isDeepAr) {
       if (isDeepARInitialized.value == false) {
@@ -286,6 +353,11 @@ class CameraScreenController extends BaseController
     if (isRecording.value) return;
 
     try {
+      zoomEvents.clear();
+      if (isDeepAr) {
+        zoomEvents.add(ZoomEvent(Duration.zero, cameraScale.value));
+      }
+
       if (isDeepAr) {
         await deepArControllerPlus.value.startVideoRecording();
       } else {
@@ -339,8 +411,21 @@ class CameraScreenController extends BaseController
       showLoader();
       if (isDeepAr) {
         final File _file =
-            await deepArControllerPlus.value.stopVideoRecording();
+        await deepArControllerPlus.value.stopVideoRecording();
         file = XFile(_file.path);
+        print('INFO: onVideoRecordingStop - DeepAR video recorded. zoomEvents length: ${zoomEvents.length}');
+        if (zoomEvents.isNotEmpty) {
+          print('INFO: onVideoRecordingStop - First event: time=${zoomEvents.first.time}, scale=${zoomEvents.first.scale}');
+          for (var i = 0; i < zoomEvents.length; i++) {
+            print('INFO: Event $i: time=${zoomEvents[i].time}, scale=${zoomEvents[i].scale}');
+          }
+        }
+        if (zoomEvents.length > 1 || (zoomEvents.isNotEmpty && zoomEvents.first.scale > 1.0)) {
+          print('INFO: onVideoRecordingStop - Zoom condition met. Applying zoom processing.');
+          file = await _applyZoomToVideo(file);
+        } else {
+          print('INFO: onVideoRecordingStop - Zoom condition NOT met.');
+        }
       } else {
         final String? videoPath = await RetrytechPlugin.shared.stopRecording;
         if (videoPath == null) {
@@ -349,7 +434,7 @@ class CameraScreenController extends BaseController
         file = XFile(videoPath);
       }
       final XFile thumbnailPath =
-          await MediaPickerHelper.shared.extractThumbnail(videoPath: file.path);
+      await MediaPickerHelper.shared.extractThumbnail(videoPath: file.path);
       MediaFile mediaFile = MediaFile(
           file: file, type: MediaType.video, thumbNail: thumbnailPath);
 
@@ -370,6 +455,83 @@ class CameraScreenController extends BaseController
     }
   }
 
+  Future<XFile> _applyZoomToVideo(XFile inputFile) async {
+    try {
+      Loggers.info('Applying zoom effect using FFmpeg zoompan...');
+      final String inputPath = inputFile.path;
+      final Directory tempDir = await getTemporaryDirectory();
+      final String outputPath = '${tempDir.path}/zoomed_${DateTime.now().millisecondsSinceEpoch}.mp4';
+
+      String scaleExpr = _buildScaleExpression(zoomEvents);
+      Loggers.info('FFmpeg zoompan Scale Expression: $scaleExpr');
+
+      final List<String> arguments = [
+        '-i', inputPath,
+        '-vf', "framerate=30,scale=720:1280,transpose=1,zoompan=z='max(1.0,$scaleExpr)':x='max(0,iw/2-(iw/zoom/2))':y='max(0,ih/2-(ih/zoom/2))':d=1:s=1280x720:fps=30,transpose=2,format=yuv420p",
+      ];
+
+      if (Platform.isAndroid) {
+        arguments.addAll(['-c:v', 'libx264', '-preset', 'ultrafast']);
+      }
+
+      arguments.addAll([
+        '-map', '0:v',
+        '-map', '0:a?',
+        '-c:a', 'aac',
+        outputPath
+      ]);
+
+      final session = await FFmpegKit.executeWithArguments(arguments);
+      final returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        Loggers.success('FFmpeg Zoom applied successfully to $outputPath');
+        return XFile(outputPath);
+      } else {
+        final logs = await session.getLogs();
+        Loggers.error('FFmpeg Zoom failed:');
+        for (var l in logs) {
+          print('FFMPEG_LOG: ${l.getMessage()}');
+        }
+        showSnackBar('FFmpeg Zoom processing failed');
+        return inputFile;
+      }
+    } catch (e) {
+      Loggers.error('Error applying FFmpeg zoom: $e');
+      showSnackBar('Error applying zoom: $e');
+      return inputFile;
+    }
+  }
+
+  String _buildScaleExpression(List<ZoomEvent> events) {
+    if (events.isEmpty) return '1.0';
+    Map<int, double> frameToScale = {};
+    for (var event in events) {
+      double t = event.time.inMilliseconds / 1000.0;
+      int frame = (t * 30).toInt();
+      frameToScale[frame] = event.scale;
+    }
+
+    List<int> sortedFrames = frameToScale.keys.toList()..sort();
+    
+    if (sortedFrames.isEmpty) return '1.0';
+
+    double currentScale = frameToScale[sortedFrames.first]!;
+    String expr = currentScale.toStringAsFixed(2);
+
+    for (int i = 1; i < sortedFrames.length; i++) {
+      int frame = sortedFrames[i];
+      double prevScale = frameToScale[sortedFrames[i - 1]]!;
+      double scale = frameToScale[frame]!;
+      double diff = scale - prevScale;
+      if (diff == 0.0) continue;
+
+      String sign = diff >= 0 ? '+' : '';
+      expr += '$sign${diff.toStringAsFixed(2)}*gte(in,$frame)';
+    }
+    return expr;
+  }
+
   void _startProgressTimer() {
     _progressTimer?.cancel();
 
@@ -378,7 +540,7 @@ class CameraScreenController extends BaseController
 
     _progressTimer = Timer.periodic(
       const Duration(milliseconds: _progressUpdateInterval),
-      (timer) {
+          (timer) {
         if (progress.value < selectedSecond.value) {
           Loggers.info('Video Recording Second ${progress.value}');
           progress.value = (progress.value + increment)
@@ -391,7 +553,6 @@ class CameraScreenController extends BaseController
     );
   }
 
-  // Audio control methods
   void _startAudioPlayback() {
     if (selectedMusic.value == null) return;
     audioPlayer.seekTo(selectedMusic.value?.audioStartMS ?? 0);
@@ -404,7 +565,6 @@ class CameraScreenController extends BaseController
 
   void _stopAudioPlayback() => audioPlayer.stopPlayer();
 
-  // UI interaction methods
   void onPlayPauseToggle({int? type}) {
     if (cameraType == CameraScreenType.post) {
       _toggleReelRecording();
@@ -559,6 +719,11 @@ class CameraScreenController extends BaseController
     _progressTimer?.cancel();
     audioPlayer.release();
     isStartingRecording.value = false;
+    cameraScale.value = 1.0;
+    zoomEvents.clear();
+    if (!isDeepAr) {
+      RetrytechPlugin.shared.setZoom(1.0);
+    }
   }
 
   Future<void> applyARFilterEffect(DeepARFilters effect) async {
@@ -601,12 +766,19 @@ class PostStoryContent {
 
   PostStoryContent(
       {required this.type,
-      this.content,
-      this.thumbNail,
-      this.duration,
-      this.filter = defaultFilter,
-      this.sound,
-      this.bgGradient,
-      this.thumbnailBytes,
-      this.hasAudio = true});
+        this.content,
+        this.thumbNail,
+        this.duration,
+        this.filter = defaultFilter,
+        this.sound,
+        this.bgGradient,
+        this.thumbnailBytes,
+        this.hasAudio = true});
+}
+
+class ZoomEvent {
+  final Duration time;
+  final double scale;
+
+  ZoomEvent(this.time, this.scale);
 }

@@ -51,7 +51,7 @@ class SplashScreenController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 1000));
     bool showNavigate = await CommonService.instance.fetchGlobalSettings();
     if (showNavigate) {
-      // final translations = Get.find<DynamicTranslations>();
+      final translations = Get.find<DynamicTranslations>();
       var setting = SessionManager.instance.getSettings();
       var languages = setting?.languages ?? [];
       List<Language> downloadLanguages = languages.where((element) => element.status == 1).toList();
@@ -60,9 +60,9 @@ class SplashScreenController extends BaseController {
         return;
       }
 
-      // var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
+      var downloadedFiles = await downloadAndParseLanguages(downloadLanguages);
 
-      // translations.addTranslations(downloadedFiles);
+      translations.addTranslations(downloadedFiles);
 
       var defaultLang = languages.firstWhereOrNull((element) => element.isDefault == 1);
       Loggers.info("ParametersCXCXCXCXCXCXXCX: ${defaultLang?.toJson()}");
@@ -90,9 +90,9 @@ class SplashScreenController extends BaseController {
         bool isLanguageSelect = SessionManager.instance.getBool(SessionKeys.isLanguageScreenSelect);
         bool onBoardingShow = SessionManager.instance.getBool(SessionKeys.isOnBoardingScreenSelect);
         Loggers.info("onBoardingShowonBoardingShowonBoardingShow: ${onBoardingShow}");
-        // if (isLanguageSelect == false) {
-        //   Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
-        // } else 
+        if (isLanguageSelect == false) {
+          Get.off(() => const SelectLanguageScreen(languageNavigationType: LanguageNavigationType.fromStart));
+        } else 
         
         if (onBoardingShow == false && (setting?.onBoarding ?? []).isNotEmpty) {
           Get.off(() => const OnBoardingScreen());

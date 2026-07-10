@@ -159,12 +159,17 @@ class _TopViewForOtherUser extends StatelessWidget {
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomBackButton(
-                onTap: () {
-                  // controller.adsController.showInterstitialAdIfAvailable();
-                },
-                padding: const EdgeInsets.all(15),
+              const Padding(
+                padding: EdgeInsets.all(15.0),
+                child: CustomBackButton(width: 18, height: 18),
               ),
+
+              // CustomBackButton(
+              //   onTap: () {
+              //     // controller.adsController.showInterstitialAdIfAvailable();
+              //   },
+              //   padding: const EdgeInsets.all(15),
+              // ),
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
