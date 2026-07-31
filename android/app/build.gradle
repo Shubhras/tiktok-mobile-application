@@ -106,8 +106,8 @@ android {
         applicationId = "com.digi.zoyoshorts"
         minSdk = 24
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
     }
 
     // =========================
@@ -141,6 +141,23 @@ android {
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    // Align Media3 with retrytech_plugin (1.6.1).
+    // Media3 1.8+ moved Muxer.Factory out of transformer and crashes
+    // applyFilterAndAudioToVideo with NoClassDefFoundError.
+    implementation 'androidx.media3:media3-common:1.6.1'
+    implementation 'androidx.media3:media3-effect:1.6.1'
+    implementation 'androidx.media3:media3-transformer:1.6.1'
+    implementation 'androidx.media3:media3-exoplayer:1.6.1'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'androidx.media3') {
+            details.useVersion '1.6.1'
+            details.because 'Match retrytech_plugin Media3 1.6.1 (Muxer$Factory)'
+        }
+    }
 }
 
 flutter {

@@ -105,6 +105,31 @@ class LKey {
   static const String personal = "Personal";
   static const String editProfile = "Edit Profile";
   static const String savedPosts = "Saved Posts";
+  static const String contestReel = "Contest Reel";
+  static const String noContestsFound = "No contests found";
+  static const String joined = "Joined";
+  static const String prizePool = "Prize Pool:";
+  static const String contestAudio = "Contest Audio";
+  static const String contestCover = "Contest Cover";
+  static const String startDate = "Start Date";
+  static const String endDate = "End Date";
+  static const String contestDetailsLeaderboard =
+      "Contest Details & Leaderboard";
+  static const String topLeaderboard = "Top Leaderboard";
+  static const String noLeaderboardData = "No leaderboard data";
+  static const String joinContest = "Join Contest";
+  static const String contestStartsIn = "CONTEST STARTS IN";
+  static const String hours = "Hours";
+  static const String min = "Min";
+  static const String sec = "Sec";
+  static const String rankNumber = "Rank #@rank";
+  static const String userIdLabel = "ID: #@id";
+  static const String youSelf = "You (Self)";
+  static const String leaderboardRefreshed = "Leaderboard refreshed";
+  static const String contestNotFound = "Contest not found";
+  static const String contestAudioNotAvailable =
+      "Contest audio not available";
+  static const String contest = "Contest";
   static const String languages = "Languages";
   static const String blockedUsers = "Blocked Users";
   static const String myQrCode = "My QR Code";

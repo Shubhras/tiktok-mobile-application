@@ -437,7 +437,8 @@ class CameraEditScreenController extends BaseController {
           duration: content.value.duration,
           sound: content.value.sound,
           bgGradient: content.value.bgGradient,
-          hasAudio: hasAudio);
+          hasAudio: hasAudio,
+          contestId: content.value.contestId);
 
       // Stop any loading indicators
       isMergingVideo.value = false;

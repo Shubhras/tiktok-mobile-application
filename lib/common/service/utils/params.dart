@@ -90,4 +90,7 @@ class Params {
   static const String regionName = 'regionName';
   static const String timezone = 'timezone';
   static const String metadata = 'metadata';
+  static const String contestId = 'contestId';
+  static const String videoUrl = 'videoUrl';
+  static const String contestPostId = 'postId';
 }

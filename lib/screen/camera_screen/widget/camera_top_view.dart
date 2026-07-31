@@ -15,8 +15,13 @@ import 'package:shortzz/utilities/theme_res.dart';
 
 class CameraTopView extends StatelessWidget {
   final CameraScreenType cameraType;
+  final bool hideMusicDelete;
 
-  const CameraTopView({super.key, required this.cameraType});
+  const CameraTopView({
+    super.key,
+    required this.cameraType,
+    this.hideMusicDelete = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +62,7 @@ class CameraTopView extends StatelessWidget {
       isReelType: isReelType,
       onDeleteMusic: controller.onDeleteMusic,
       onMusicTap: controller.onSelectedMusicTap,
+      hideDelete: hideMusicDelete,
     );
   }
 
@@ -106,6 +112,7 @@ class SelectedMusicView extends StatelessWidget {
   final bool isReelType;
   final VoidCallback onDeleteMusic;
   final Function(SelectedMusic? music) onMusicTap;
+  final bool hideDelete;
 
   const SelectedMusicView({
     super.key,
@@ -113,6 +120,7 @@ class SelectedMusicView extends StatelessWidget {
     required this.isReelType,
     required this.onDeleteMusic,
     required this.onMusicTap,
+    this.hideDelete = false,
   });
 
   @override
@@ -140,7 +148,7 @@ class SelectedMusicView extends StatelessWidget {
 
   Widget _buildMusicThumbnailWithDelete(BuildContext context) {
     return InkWell(
-      onTap: _showDeleteConfirmation,
+      onTap: hideDelete ? null : _showDeleteConfirmation,
       child: SizedBox(
         width: 45,
         height: 45,
@@ -155,16 +163,17 @@ class SelectedMusicView extends StatelessWidget {
               cornerSmoothing: 1,
               isShowPlaceHolder: true,
             ),
-            Positioned(
-              top: 0,
-              left: -3,
-              child: BorderRoundedButton(
-                  image: AssetRes.icClose,
-                  color: textDarkGrey(context),
-                  bgColor: whitePure(context),
-                  height: 15,
-                  width: 15),
-            ),
+            if (!hideDelete)
+              Positioned(
+                top: 0,
+                left: -3,
+                child: BorderRoundedButton(
+                    image: AssetRes.icClose,
+                    color: textDarkGrey(context),
+                    bgColor: whitePure(context),
+                    height: 15,
+                    width: 15),
+              ),
           ],
         ),
       ),

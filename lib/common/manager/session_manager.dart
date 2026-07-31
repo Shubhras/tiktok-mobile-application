@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shortzz/common/service/api/user_service.dart';
@@ -20,6 +21,8 @@ class SessionManager {
 
   void setAuthToken(Token? token) {
     storage.write(SessionKeys.authToken, token);
+    debugPrint(
+        'AuthToken (login)  authToken: ${token?.authToken}');
   }
 
   String getAuthToken() {

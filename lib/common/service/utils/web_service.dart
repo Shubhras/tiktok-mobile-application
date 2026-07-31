@@ -11,6 +11,15 @@ class WebService {
   static var search = _Search();
   static var moderation = _Moderation();
   static var common = _Common();
+  static var contest = _Contest();
+}
+
+class _Contest {
+  String fetchContestList = "${apiURL}contest/fetchContestList";
+  String fetchContestDetails = "${apiURL}contest/fetchContestDetails";
+  String joinContest = "${apiURL}contest/joinContest";
+  String uploadContestReel = "${apiURL}contest/uploadContestReel";
+  String fetchContestLeaderboard = "${apiURL}contest/fetchContestLeaderboard";
 }
 
 class _Common {

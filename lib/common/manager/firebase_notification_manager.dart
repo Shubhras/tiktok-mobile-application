@@ -20,6 +20,8 @@ import 'package:shortzz/model/livestream/livestream.dart';
 import 'package:shortzz/model/post_story/post_model.dart';
 import 'package:shortzz/screen/chat_screen/chat_screen.dart';
 import 'package:shortzz/screen/chat_screen/chat_screen_controller.dart';
+import 'package:shortzz/screen/contest_reel_screen/contest_reel_screen.dart';
+import 'package:shortzz/screen/contest_reel_screen/contest_reel_screen_controller.dart';
 import 'package:shortzz/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:shortzz/screen/live_stream/livestream_screen/audience/live_stream_audience_screen.dart';
 import 'package:shortzz/screen/live_stream/livestream_screen/host/livestream_host_screen.dart';
@@ -163,10 +165,19 @@ class FirebaseNotificationManager {
 
   Future<void> handleNotification(String payload) async {
     final RemoteMessage message = RemoteMessage.fromMap(jsonDecode(payload));
-    final dataType = message.data['type'];
+    final dataType = message.data['type']?.toString();
     final dataString = message.data['notification_data'];
     print('DATA TYPE : $dataType');
     print('DATA STRING : $dataString');
+    print('FULL NOTIFICATION DATA : ${message.data}');
+    print('NOTIFICATION TITLE : ${message.notification?.title}');
+
+    // Backend: { "type": "reel_contest", "contestId": "CONT014" }
+    if (dataType == 'reel_contest' || _isContestNotificationFallback(message)) {
+      await _handleContestNotification(message);
+      return;
+    }
+
     if (dataType == null || dataString == null || dataString.isEmpty) return;
     final controller = Get.put(DashboardScreenController());
     switch (dataType) {
@@ -190,6 +201,49 @@ class FirebaseNotificationManager {
         break;
       default:
         Loggers.warning('Unknown notification type: $dataType');
+    }
+  }
+
+  /// Fallback when data is empty / older payload without type.
+  bool _isContestNotificationFallback(RemoteMessage message) {
+    final data = message.data;
+    final contestId =
+        (data['contestId'] ?? data['contest_id'] ?? '').toString().trim();
+    if (contestId.isNotEmpty) return true;
+
+    final text = [
+      data['title'],
+      data['body'],
+      message.notification?.title,
+      message.notification?.body,
+    ].whereType<String>().join(' ').toLowerCase();
+
+    return text.contains('reel contest') ||
+        text.contains('contest started') ||
+        text.contains('prize pool');
+  }
+
+  Future<void> _handleContestNotification(RemoteMessage message) async {
+    try {
+      final contestId =
+          (message.data['contestId'] ?? message.data['contest_id'] ?? '')
+              .toString()
+              .trim();
+
+      Loggers.info(
+          'Contest notification tap | type: ${message.data['type']} | contestId: $contestId');
+
+      // No contestId → open contest list
+      if (contestId.isEmpty) {
+        Get.to(() => const ContestReelScreen());
+        return;
+      }
+
+      // type == reel_contest → open Contest Detail with fetchContestDetails(contestId)
+      final controller = Get.put(ContestReelScreenController());
+      await controller.openContestById(contestId);
+    } catch (e) {
+      Loggers.error('Failed to handle contest notification: $e');
     }
   }
 
@@ -348,6 +402,7 @@ enum NotificationType {
   post('post'),
   user('user'),
   liveStream('live_stream'),
+  contest('reel_contest'),
   other('other');
 
   final String type;

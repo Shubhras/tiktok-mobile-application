@@ -19,6 +19,7 @@ import 'package:shortzz/common/manager/logger.dart';
 import 'package:shortzz/common/manager/session_manager.dart';
 import 'package:shortzz/common/service/api/add_post_story_service.dart';
 import 'package:shortzz/common/service/api/common_service.dart';
+import 'package:shortzz/common/service/api/contest_service.dart';
 import 'package:shortzz/common/service/api/post_service.dart';
 import 'package:shortzz/common/service/sight_engin/sight_engine_service.dart';
 import 'package:shortzz/common/service/utils/params.dart';
@@ -34,6 +35,7 @@ import 'package:shortzz/screen/camera_screen/camera_screen.dart';
 import 'package:shortzz/screen/camera_screen/camera_screen_controller.dart';
 import 'package:shortzz/screen/color_filter_screen/widget/color_filtered.dart';
 import 'package:shortzz/screen/comment_sheet/helper/comment_helper.dart';
+import 'package:shortzz/screen/contest_reel_screen/contest_reel_screen_controller.dart';
 import 'package:shortzz/screen/create_feed_screen/create_feed_screen.dart';
 import 'package:shortzz/screen/dashboard_screen/dashboard_screen_controller.dart';
 import 'package:shortzz/screen/profile_screen/profile_screen_controller.dart';
@@ -268,12 +270,24 @@ class CreateFeedScreenController extends BaseController {
   }
 
   Future<void> _uploadPostHandler(Map<String, dynamic> postParams) async {
+    final isContestReel = createType == CreateFeedType.reel &&
+        (content.value?.contestId?.isNotEmpty ?? false);
+
     // Close any previous screens if needed
     Get.back();
     if (createType == CreateFeedType.reel) {
       Get.back();
       Get.back();
     }
+
+    // Contest reel: go to Profile tab so bottom upload progress is visible
+    if (isContestReel) {
+      Get.until((route) => route.isFirst);
+      if (Get.isRegistered<DashboardScreenController>()) {
+        Get.find<DashboardScreenController>().onChanged(4); // Profile tab
+      }
+    }
+
     Loggers.info('Post upload initiated...');
 
     PostModel? postResponse;
@@ -322,6 +336,46 @@ class CreateFeedScreenController extends BaseController {
           return;
         }
         Loggers.success('Post uploaded successfully ✅');
+
+        // Contest reel: join + upload entry after Post (user already on Profile)
+        final contestId = content.value?.contestId;
+        if (isContestReel && contestId != null && contestId.isNotEmpty) {
+          final videoUrl = post.video ?? '';
+          try {
+            final joinResult = await ContestService.instance.joinContest(
+              contestId: contestId,
+            );
+            if (joinResult.status != true) {
+              Loggers.error('Contest join failed: ${joinResult.message}');
+              failedResponseSnackBar(message: joinResult.message);
+              return;
+            }
+            Loggers.success('Contest joined ✅');
+
+            final contestResult =
+                await ContestService.instance.uploadContestReel(
+              contestId: contestId,
+              videoUrl: videoUrl,
+              postId: '${post.id}',
+            );
+            if (contestResult.status == true) {
+              Loggers.success('Contest reel uploaded ✅');
+              if (Get.isRegistered<ContestReelScreenController>()) {
+                Get.find<ContestReelScreenController>()
+                    .onContestUploadSuccess(contestId);
+              }
+            } else {
+              Loggers.error(
+                  'Contest reel upload failed: ${contestResult.message}');
+              failedResponseSnackBar(message: contestResult.message);
+            }
+          } catch (e) {
+            Loggers.error('Contest join/upload exception: $e');
+            failedResponseSnackBar(message: '$e');
+          } finally {
+            ContestService.pendingContestId = null;
+          }
+        }
 
         // Notify profile controller if available
         if (Get.isRegistered<ProfileScreenController>(

@@ -36,6 +36,7 @@ class AssetRes {
   static const String icProfile = '${icons}ic_profile.png';
   static const String icPost = '${icons}ic_post.png';
   static const String icReel = '${icons}ic_reel.png';
+  static const String icContextReel = '${icons}ic_context_reel.png';
   static const String icSearch = '${icons}ic_search.png';
   static const String icChat = '${icons}ic_chat.png';
   static const String icLiveStream = '${icons}ic_live_stream.png';

@@ -17,6 +17,7 @@ import 'package:shortzz/common/extensions/string_extension.dart';
 import 'package:shortzz/common/functions/media_picker_helper.dart';
 import 'package:shortzz/common/manager/logger.dart';
 import 'package:shortzz/common/manager/session_manager.dart';
+import 'package:shortzz/common/service/api/contest_service.dart';
 import 'package:shortzz/common/widget/confirmation_dialog.dart';
 import 'package:shortzz/languages/languages_keys.dart';
 import 'package:shortzz/model/general/settings_model.dart';
@@ -72,6 +73,7 @@ class CameraScreenController extends BaseController
 
   @override
   void onClose() {
+    ContestService.pendingContestId = null;
     _cleanUpResources();
     super.onClose();
   }
@@ -628,7 +630,8 @@ class CameraScreenController extends BaseController
           type: PostStoryContentType.reel,
           content: file.file.path,
           thumbNail: file.thumbNail.path,
-          sound: selectedMusic.value);
+          sound: selectedMusic.value,
+          contestId: ContestService.pendingContestId);
       stopLoader();
       navigateCameraEditScreen(content);
     } catch (e) {
@@ -763,17 +766,19 @@ class PostStoryContent {
   SelectedMusic? sound;
   LinearGradient? bgGradient;
   Uint8List? thumbnailBytes;
+  String? contestId;
 
   PostStoryContent(
       {required this.type,
-        this.content,
-        this.thumbNail,
-        this.duration,
-        this.filter = defaultFilter,
-        this.sound,
-        this.bgGradient,
-        this.thumbnailBytes,
-        this.hasAudio = true});
+      this.content,
+      this.thumbNail,
+      this.duration,
+      this.filter = defaultFilter,
+      this.sound,
+      this.bgGradient,
+      this.thumbnailBytes,
+      this.hasAudio = true,
+      this.contestId});
 }
 
 class ZoomEvent {

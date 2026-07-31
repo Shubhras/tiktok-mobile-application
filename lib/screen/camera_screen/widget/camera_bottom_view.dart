@@ -14,8 +14,13 @@ import 'package:shortzz/utilities/theme_res.dart';
 
 class CameraBottomView extends StatelessWidget {
   final CameraScreenType cameraType;
+  final bool hideGallery;
 
-  const CameraBottomView({super.key, required this.cameraType});
+  const CameraBottomView({
+    super.key,
+    required this.cameraType,
+    this.hideGallery = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +41,12 @@ class CameraBottomView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Gallery button
-              CustomBorderRoundIcon(
-                  image: AssetRes.icImage, onTap: controller.onMediaTap),
+              // Gallery button (hidden for contest join flow)
+              if (hideGallery)
+                const SizedBox(width: 37, height: 37)
+              else
+                CustomBorderRoundIcon(
+                    image: AssetRes.icImage, onTap: controller.onMediaTap),
 
               // Recording control button
               RecordingControlButton(controller: controller),

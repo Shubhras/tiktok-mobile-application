@@ -18,8 +18,14 @@ enum CameraScreenType { post, story }
 class CameraScreen extends StatelessWidget {
   final CameraScreenType cameraType;
   final SelectedMusic? selectedMusic;
+  final bool hideGallery;
 
-  const CameraScreen({super.key, required this.cameraType, this.selectedMusic});
+  const CameraScreen({
+    super.key,
+    required this.cameraType,
+    this.selectedMusic,
+    this.hideGallery = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -119,10 +125,16 @@ class CameraScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CameraTopView(cameraType: cameraType),
+          CameraTopView(
+            cameraType: cameraType,
+            hideMusicDelete: hideGallery,
+          ),
           if (cameraType == CameraScreenType.story)
             _buildTextStoryButton(controller),
-          CameraBottomView(cameraType: cameraType),
+          CameraBottomView(
+            cameraType: cameraType,
+            hideGallery: hideGallery,
+          ),
         ],
       ),
     );
