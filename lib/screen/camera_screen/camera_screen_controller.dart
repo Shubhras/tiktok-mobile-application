@@ -12,6 +12,7 @@ import 'package:retrytech_plugin/retrytech_plugin.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/extensions/string_extension.dart';
 import 'package:shortzz/common/functions/media_picker_helper.dart';
@@ -36,6 +37,7 @@ class CameraScreenController extends BaseController
   RxList<int> secondsList = AppRes.secondList.obs;
 
   final CameraScreenType cameraType;
+  final bool isContestFlow;
   final PlayerController audioPlayer = PlayerController();
   final Rx<DeepArControllerPlus> deepArControllerPlus =
       DeepArControllerPlus().obs;
@@ -61,7 +63,11 @@ class CameraScreenController extends BaseController
   Timer? _progressTimer;
   Completer<void>? _cameraOperationCompleter;
 
-  CameraScreenController(this.cameraType, this.selectedMusic);
+  CameraScreenController(
+    this.cameraType,
+    this.selectedMusic, {
+    this.isContestFlow = false,
+  });
 
   @override
   void onInit() {
@@ -665,6 +671,339 @@ class CameraScreenController extends BaseController
         await _initializeAudioIfNeeded();
       }
     }
+  }
+
+  void onDownloadContestSongTap() {
+    final music = selectedMusic.value?.music;
+    final localPath = selectedMusic.value?.downloadedURL?.trim() ?? '';
+    final soundUrl = music?.sound?.trim() ?? '';
+    if (localPath.isEmpty && soundUrl.isEmpty) {
+      showSnackBar(LKey.contestAudioNotAvailable.tr);
+      return;
+    }
+
+    final songName = music?.title?.trim().isNotEmpty == true
+        ? music!.title!.trim()
+        : LKey.contestAudio.tr;
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1B2A4A),
+                Color(0xFF15161A),
+                Color(0xFF0F1A2E),
+              ],
+            ),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF42A5F5).withValues(alpha: 0.25),
+                blurRadius: 28,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF42A5F5),
+                      Color(0xFF1E88E5),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF42A5F5).withValues(alpha: 0.45),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.download_rounded,
+                  color: Colors.white,
+                  size: 34,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                LKey.contest.tr,
+                style: const TextStyle(
+                  color: Color(0xFF90CAF9),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                songName,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                LKey.downloadContestSongConfirm.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 14,
+                  height: 1.4,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.25),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: Text(
+                        LKey.cancel.tr,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF42A5F5),
+                            Color(0xFF1E88E5),
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                const Color(0xFF1E88E5).withValues(alpha: 0.4),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.back();
+                          downloadContestSong();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          LKey.yes.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierColor: Colors.black.withValues(alpha: 0.65),
+    );
+  }
+
+  Future<void> downloadContestSong() async {
+    final selected = selectedMusic.value;
+    final music = selected?.music;
+    final localPath = selected?.downloadedURL?.trim() ?? '';
+    final soundUrl = music?.sound?.trim() ?? '';
+
+    if (localPath.isEmpty && soundUrl.isEmpty) {
+      showSnackBar(LKey.contestAudioNotAvailable.tr);
+      return;
+    }
+
+    showLoader();
+    try {
+      if (Platform.isAndroid) {
+        await Permission.storage.request();
+      }
+
+      File sourceFile;
+      if (localPath.isNotEmpty && await File(localPath).exists()) {
+        sourceFile = File(localPath);
+      } else {
+        final fullUrl =
+            soundUrl.startsWith('http') ? soundUrl : soundUrl.addBaseURL();
+        sourceFile = await DefaultCacheManager().getSingleFile(fullUrl);
+      }
+
+      final rawName = music?.title?.trim().isNotEmpty == true
+          ? music!.title!.trim()
+          : 'contest_song';
+      final safeName = rawName
+          .replaceAll(RegExp(r'[^\w\s\-.]'), '_')
+          .replaceAll(RegExp(r'\s+'), '_');
+      final extension = _contestAudioExtension(soundUrl, sourceFile.path);
+      final contestId = ContestService.pendingContestId ?? 'song';
+      final fileName = '${safeName}_$contestId$extension';
+
+      final savedPath = await _saveContestAudioToDownloads(sourceFile, fileName);
+      stopLoader();
+      if (savedPath != null) {
+        _showContestDownloadSuccessSnackBar(savedPath);
+      } else {
+        showSnackBar(LKey.musicDownloadFailed.tr);
+      }
+    } catch (_) {
+      stopLoader();
+      showSnackBar(LKey.musicDownloadFailed.tr);
+    }
+  }
+
+  String _contestAudioExtension(String url, String localPath) {
+    final fromPath = localPath.contains('.')
+        ? '.${localPath.split('.').last.split('?').first}'
+        : '';
+    if (fromPath.length <= 5 &&
+        RegExp(r'^\.(mp3|m4a|aac|wav|ogg)$', caseSensitive: false)
+            .hasMatch(fromPath)) {
+      return fromPath.toLowerCase();
+    }
+    final uriPath = Uri.tryParse(url)?.path ?? '';
+    if (uriPath.contains('.')) {
+      final ext = '.${uriPath.split('.').last}';
+      if (RegExp(r'^\.(mp3|m4a|aac|wav|ogg)$', caseSensitive: false)
+          .hasMatch(ext)) {
+        return ext.toLowerCase();
+      }
+    }
+    return '.mp3';
+  }
+
+  Future<String?> _saveContestAudioToDownloads(
+      File source, String fileName) async {
+    Directory? directory;
+    if (Platform.isAndroid) {
+      directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) {
+        directory = await getExternalStorageDirectory();
+      }
+    } else {
+      directory = await getApplicationDocumentsDirectory();
+    }
+    if (directory == null) return null;
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+    final destination =
+        File('${directory.path}${Platform.pathSeparator}$fileName');
+    await source.copy(destination.path);
+    return destination.path;
+  }
+
+  void _showContestDownloadSuccessSnackBar(String filePath) {
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
+
+    Get.rawSnackbar(
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF1B2A4A),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(14, 14, 8, 14),
+      borderRadius: 14,
+      duration: const Duration(seconds: 6),
+      isDismissible: true,
+      messageText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            LKey.downloadCompletedSuccessfully.tr,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            filePath,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.65),
+              fontSize: 11,
+              height: 1.3,
+            ),
+          ),
+        ],
+      ),
+      mainButton: TextButton(
+        onPressed: () async {
+          if (Get.isSnackbarOpen) {
+            Get.closeCurrentSnackbar();
+          }
+          await SharePlus.instance.share(
+            ShareParams(files: [XFile(filePath)]),
+          );
+        },
+        style: TextButton.styleFrom(
+          foregroundColor: const Color(0xFF90CAF9),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        child: Text(
+          LKey.open.tr,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
   }
 
   void onDeleteMusic() {

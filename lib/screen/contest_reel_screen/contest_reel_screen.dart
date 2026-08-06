@@ -199,6 +199,7 @@ class _ContestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isJoined = contest.joined == true;
+    final isExpired = !isJoined && controller.isContestExpired(contest);
     final hasAudio =
         contest.audioURL != null && contest.audioURL!.trim().isNotEmpty;
 
@@ -252,19 +253,31 @@ class _ContestCard extends StatelessWidget {
                                       decoration: BoxDecoration(
                     color: isJoined
                         ? Colors.green.withOpacity(0.25)
-                        : Colors.orange.withOpacity(0.25),
+                        : isExpired
+                            ? Colors.red.withOpacity(0.2)
+                            : Colors.orange.withOpacity(0.25),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                       color: isJoined
                           ? Colors.greenAccent.withOpacity(0.5)
-                          : Colors.orangeAccent.withOpacity(0.5),
+                          : isExpired
+                              ? Colors.redAccent.withOpacity(0.5)
+                              : Colors.orangeAccent.withOpacity(0.5),
                                           width: 1,
                                         ),
                                       ),
                   child: Text(
-                    isJoined ? LKey.joined.tr : LKey.join.tr,
+                    isJoined
+                        ? LKey.joined.tr
+                        : isExpired
+                            ? LKey.expired.tr
+                            : LKey.join.tr,
                                         style: TextStyle(
-                      color: isJoined ? Colors.greenAccent : Colors.orangeAccent,
+                      color: isJoined
+                          ? Colors.greenAccent
+                          : isExpired
+                              ? Colors.redAccent
+                              : Colors.orangeAccent,
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                         ),

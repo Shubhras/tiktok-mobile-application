@@ -19,18 +19,23 @@ class CameraScreen extends StatelessWidget {
   final CameraScreenType cameraType;
   final SelectedMusic? selectedMusic;
   final bool hideGallery;
+  final bool isContestFlow;
 
   const CameraScreen({
     super.key,
     required this.cameraType,
     this.selectedMusic,
     this.hideGallery = false,
+    this.isContestFlow = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final controller =
-        Get.put(CameraScreenController(cameraType, selectedMusic.obs));
+    final controller = Get.put(CameraScreenController(
+      cameraType,
+      selectedMusic.obs,
+      isContestFlow: isContestFlow,
+    ));
 
     return PopScope(
       canPop: false,
@@ -127,7 +132,8 @@ class CameraScreen extends StatelessWidget {
         children: [
           CameraTopView(
             cameraType: cameraType,
-            hideMusicDelete: hideGallery,
+            hideMusicDelete: isContestFlow,
+            showContestDownload: isContestFlow,
           ),
           if (cameraType == CameraScreenType.story)
             _buildTextStoryButton(controller),

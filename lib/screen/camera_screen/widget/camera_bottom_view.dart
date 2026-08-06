@@ -41,7 +41,7 @@ class CameraBottomView extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Gallery button (hidden for contest join flow)
+              // Gallery button
               if (hideGallery)
                 const SizedBox(width: 37, height: 37)
               else

@@ -16,11 +16,13 @@ import 'package:shortzz/utilities/theme_res.dart';
 class CameraTopView extends StatelessWidget {
   final CameraScreenType cameraType;
   final bool hideMusicDelete;
+  final bool showContestDownload;
 
   const CameraTopView({
     super.key,
     required this.cameraType,
     this.hideMusicDelete = false,
+    this.showContestDownload = false,
   });
 
   @override
@@ -75,6 +77,8 @@ class CameraTopView extends StatelessWidget {
       return Column(
         spacing: 15,
         children: [
+          if (showContestDownload) _ContestSongDownloadButton(controller),
+
           // Flash toggle
           CustomBorderRoundIcon(
             onTap: controller.onToggleFlash,
@@ -104,6 +108,24 @@ class CameraTopView extends StatelessWidget {
         ],
       );
     });
+  }
+}
+
+class _ContestSongDownloadButton extends StatelessWidget {
+  final CameraScreenController controller;
+
+  const _ContestSongDownloadButton(this.controller);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CustomBorderRoundIcon(
+          image: AssetRes.icDownload,
+          onTap: controller.onDownloadContestSongTap,
+        ),
+      ],
+    );
   }
 }
 

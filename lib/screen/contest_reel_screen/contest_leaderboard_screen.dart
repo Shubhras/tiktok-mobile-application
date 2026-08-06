@@ -129,6 +129,27 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                                                     color: Colors.greenAccent,
                                                   ),
                                                 ),
+                                              )
+                                            else if (controller.isContestExpired(contest))
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 12, vertical: 6),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.withOpacity(0.2),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: Colors.redAccent.withOpacity(0.5),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  LKey.expired.tr,
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                ),
                                               ),
                                           ],
                                         ),
@@ -187,61 +208,94 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                                           ],
                                         ),
                                         const SizedBox(height: 15),
-                                        GestureDetector(
-                                          onTap: contest == null
-                                              ? null
-                                              : () => controller.togglePlayPause(contest),
-                                          child: Row(
-                                            children: [
-                                              Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  CustomImage(
-                                                    size: const Size(36, 36),
-                                                    radius: 8,
-                                                    image: controller
-                                                        .resolveImageUrl(contest?.image),
-                                                    isShowPlaceHolder: true,
-                                                    placeHolderImage: AssetRes.icMusic,
-                                                  ),
-                                                  Container(
-                                                    width: 36,
-                                                    height: 36,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black38,
-                                                      borderRadius: BorderRadius.circular(8),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: contest == null
+                                                    ? null
+                                                    : () => controller
+                                                        .togglePlayPause(contest),
+                                                child: Row(
+                                                  children: [
+                                                    Stack(
+                                                      alignment: Alignment.center,
+                                                      children: [
+                                                        CustomImage(
+                                                          size: const Size(36, 36),
+                                                          radius: 8,
+                                                          image: controller
+                                                              .resolveImageUrl(
+                                                                  contest?.image),
+                                                          isShowPlaceHolder: true,
+                                                          placeHolderImage:
+                                                              AssetRes.icMusic,
+                                                        ),
+                                                        Container(
+                                                          width: 36,
+                                                          height: 36,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.black38,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(8),
+                                                          ),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Icon(
+                                                            contest != null &&
+                                                                    controller
+                                                                        .isContestPlaying(
+                                                                            contest)
+                                                                ? Icons.pause
+                                                                : Icons
+                                                                    .play_arrow,
+                                                            size: 20,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    alignment: Alignment.center,
-                                                    child: Icon(
-                                                      contest != null &&
-                                                              controller.isContestPlaying(contest)
-                                                          ? Icons.pause
-                                                          : Icons.play_arrow,
-                                                      size: 20,
-                                                      color: Colors.white,
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Text(
+                                                        contest?.audioName
+                                                                    ?.trim()
+                                                                    .isNotEmpty ==
+                                                                true
+                                                            ? contest!.audioName!
+                                                            : LKey.contestAudio.tr,
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
+                                            ),
+                                            if ((contest?.audioURL ?? '')
+                                                .trim()
+                                                .isNotEmpty) ...[
                                               const SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  contest?.audioName
-                                                              ?.trim()
-                                                              .isNotEmpty ==
-                                                          true
-                                                      ? contest!.audioName!
-                                                      : LKey.contestAudio.tr,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  overflow: TextOverflow.ellipsis,
+                                              GestureDetector(
+                                                onTap: controller
+                                                    .onDownloadContestAudioTap,
+                                                child: Image.asset(
+                                                  AssetRes.icDownload,
+                                                  width: 22,
+                                                  height: 22,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ],
-                                          ),
+                                          ],
                                         ),
                                         const SizedBox(height: 15),
                                         const Divider(
@@ -350,6 +404,9 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                             Obx(() {
                               final isJoined =
                                   controller.selectedOption.value == 'Joined';
+                              final isExpired = !isJoined &&
+                                  controller.isContestExpired(
+                                      controller.selectedContest.value);
                               final rank = controller.myRanking.value?.rank;
                               return Container(
                                 padding: const EdgeInsets.all(15),
@@ -412,14 +469,19 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                                       decoration: BoxDecoration(
                                         color: isJoined
                                             ? Colors.white.withOpacity(0.15)
-                                            : Colors.blueAccent
-                                                .withOpacity(0.25),
+                                            : isExpired
+                                                ? Colors.red.withOpacity(0.2)
+                                                : Colors.blueAccent
+                                                    .withOpacity(0.25),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
                                           color: isJoined
                                               ? Colors.white24
-                                              : Colors.blueAccent
-                                                  .withOpacity(0.5),
+                                              : isExpired
+                                                  ? Colors.redAccent
+                                                      .withOpacity(0.5)
+                                                  : Colors.blueAccent
+                                                      .withOpacity(0.5),
                                         ),
                                       ),
                                       child: Text(
@@ -427,11 +489,15 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                                             ? LKey.rankNumber.trParams({
                                                 'rank': '${rank ?? '-'}',
                                               })
-                                            : LKey.join.tr,
+                                            : isExpired
+                                                ? LKey.expired.tr
+                                                : LKey.join.tr,
                                         style: TextStyle(
                                           color: isJoined
                                               ? Colors.white
-                                              : Colors.blueAccent[100],
+                                              : isExpired
+                                                  ? Colors.redAccent
+                                                  : Colors.blueAccent[100],
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -528,6 +594,9 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
 
                           final isTimerRunning =
                               controller.timeRemainingSeconds.value > 0;
+                          final isExpired = controller.isContestExpired(
+                              controller.selectedContest.value);
+                          final isDisabled = isTimerRunning || isExpired;
 
                           return Container(
                             padding: const EdgeInsets.symmetric(
@@ -544,23 +613,29 @@ class _ContestLeaderboardScreenState extends State<ContestLeaderboardScreen> {
                               height: 48,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: isTimerRunning
+                                  backgroundColor: isDisabled
                                       ? Colors.white.withOpacity(0.12)
                                       : Colors.blueAccent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  elevation: isTimerRunning ? 0 : 2,
+                                  elevation: isDisabled ? 0 : 2,
                                 ),
-                                onPressed: isTimerRunning
-                                    ? null
-                                    : () {
-                                        controller.onJoinContest();
-                                      },
+                                onPressed: () {
+                                  if (isExpired) {
+                                    controller
+                                        .showSnackBar(LKey.contestExpired.tr);
+                                    return;
+                                  }
+                                  if (isTimerRunning) return;
+                                  controller.onJoinContest();
+                                },
                                 child: Text(
-                                  LKey.joinContest.tr,
+                                  isExpired
+                                      ? LKey.expired.tr
+                                      : LKey.joinContest.tr,
                                   style: TextStyle(
-                                    color: isTimerRunning
+                                    color: isDisabled
                                         ? Colors.white38
                                         : Colors.white,
                                     fontSize: 15,
