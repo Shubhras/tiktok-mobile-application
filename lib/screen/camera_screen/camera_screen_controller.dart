@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shortzz/common/controller/base_controller.dart';
 import 'package:shortzz/common/extensions/string_extension.dart';
+import 'package:shortzz/common/functions/contest_audio_download_helper.dart';
 import 'package:shortzz/common/functions/media_picker_helper.dart';
 import 'package:shortzz/common/manager/logger.dart';
 import 'package:shortzz/common/manager/session_manager.dart';
@@ -867,30 +868,19 @@ class CameraScreenController extends BaseController
 
     showLoader();
     try {
-      if (Platform.isAndroid) {
-        await Permission.storage.request();
-      }
-
-      File sourceFile;
-      if (localPath.isNotEmpty && await File(localPath).exists()) {
-        sourceFile = File(localPath);
-      } else {
-        final fullUrl =
-            soundUrl.startsWith('http') ? soundUrl : soundUrl.addBaseURL();
-        sourceFile = await DefaultCacheManager().getSingleFile(fullUrl);
-      }
-
       final rawName = music?.title?.trim().isNotEmpty == true
           ? music!.title!.trim()
           : 'contest_song';
-      final safeName = rawName
-          .replaceAll(RegExp(r'[^\w\s\-.]'), '_')
-          .replaceAll(RegExp(r'\s+'), '_');
-      final extension = _contestAudioExtension(soundUrl, sourceFile.path);
       final contestId = ContestService.pendingContestId ?? 'song';
-      final fileName = '${safeName}_$contestId$extension';
+      final audioUrl = soundUrl.isEmpty
+          ? ''
+          : (soundUrl.startsWith('http') ? soundUrl : soundUrl.addBaseURL());
 
-      final savedPath = await _saveContestAudioToDownloads(sourceFile, fileName);
+      final savedPath = await ContestAudioDownloadHelper.downloadAndSave(
+        audioUrl: audioUrl.isNotEmpty ? audioUrl : localPath,
+        fileBaseName: '${rawName}_$contestId',
+        localSourcePath: localPath,
+      );
       stopLoader();
       if (savedPath != null) {
         _showContestDownloadSuccessSnackBar(savedPath);
@@ -901,47 +891,6 @@ class CameraScreenController extends BaseController
       stopLoader();
       showSnackBar(LKey.musicDownloadFailed.tr);
     }
-  }
-
-  String _contestAudioExtension(String url, String localPath) {
-    final fromPath = localPath.contains('.')
-        ? '.${localPath.split('.').last.split('?').first}'
-        : '';
-    if (fromPath.length <= 5 &&
-        RegExp(r'^\.(mp3|m4a|aac|wav|ogg)$', caseSensitive: false)
-            .hasMatch(fromPath)) {
-      return fromPath.toLowerCase();
-    }
-    final uriPath = Uri.tryParse(url)?.path ?? '';
-    if (uriPath.contains('.')) {
-      final ext = '.${uriPath.split('.').last}';
-      if (RegExp(r'^\.(mp3|m4a|aac|wav|ogg)$', caseSensitive: false)
-          .hasMatch(ext)) {
-        return ext.toLowerCase();
-      }
-    }
-    return '.mp3';
-  }
-
-  Future<String?> _saveContestAudioToDownloads(
-      File source, String fileName) async {
-    Directory? directory;
-    if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-      if (!await directory.exists()) {
-        directory = await getExternalStorageDirectory();
-      }
-    } else {
-      directory = await getApplicationDocumentsDirectory();
-    }
-    if (directory == null) return null;
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-    final destination =
-        File('${directory.path}${Platform.pathSeparator}$fileName');
-    await source.copy(destination.path);
-    return destination.path;
   }
 
   void _showContestDownloadSuccessSnackBar(String filePath) {
@@ -971,12 +920,12 @@ class CameraScreenController extends BaseController
           ),
           const SizedBox(height: 4),
           Text(
-            filePath,
+            LKey.fileSavedToDownloadFolder.tr,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.65),
-              fontSize: 11,
+              fontSize: 12,
               height: 1.3,
             ),
           ),

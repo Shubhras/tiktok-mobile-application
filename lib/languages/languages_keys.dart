@@ -380,6 +380,8 @@ class LKey {
   static const String viewMore = "View More";
   static const String downloadCompletedSuccessfully =
       "Download completed successfully!";
+  static const String fileSavedToDownloadFolder =
+      "File saved to Download folder";
   static const String open = "Open";
   static const String downloadHasStarted = "Download has started...";
   static const String userNotFound = "User not found.";
