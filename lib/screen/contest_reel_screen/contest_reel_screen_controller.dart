@@ -652,24 +652,22 @@ class ContestReelScreenController extends BaseController {
     _timer?.cancel();
 
     // ---------- TEST (30 sec) ----------
-    timeRemainingSeconds.value = 30;
+    // timeRemainingSeconds.value = 30;
 
     // ---------- REAL (startDate) ----------
-    // final startDateStr = selectedContest.value?.startDate;
-    // if (startDateStr == null || startDateStr.isEmpty) {
-    //   timeRemainingSeconds.value = 0;
-    //   return;
-    // }
-    // try {
-    //   final start = DateTime.parse(startDateStr).toLocal();
-    //   final remaining = start.difference(DateTime.now()).inSeconds;
-    //   timeRemainingSeconds.value = remaining > 0 ? remaining : 0;
-    // } catch (_) {
-    //   timeRemainingSeconds.value = 0;
-    //   return;
-    // }
-    // if (timeRemainingSeconds.value <= 0) return;
-
+    final startDateStr = selectedContest.value?.startDate;
+    if (startDateStr == null || startDateStr.isEmpty) {
+      timeRemainingSeconds.value = 0;
+      return;
+    }
+    try {
+      final start = DateTime.parse(startDateStr).toLocal();
+      final remaining = start.difference(DateTime.now()).inSeconds;
+      timeRemainingSeconds.value = remaining > 0 ? remaining : 0;
+    } catch (_) {
+      timeRemainingSeconds.value = 0;
+      return;
+    }
     if (timeRemainingSeconds.value <= 0) return;
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
